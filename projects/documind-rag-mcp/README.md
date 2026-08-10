@@ -107,7 +107,7 @@ Methodology, configuration, and limitations: [docs/evaluation.md](docs/evaluatio
 cd projects/documind-rag-mcp
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt pytest pytest-asyncio reportlab
+pip install -r requirements.txt -r requirements-dev.txt
 cp .env.example .env
 cd backend
 uvicorn app.main:app --reload --port 8000
