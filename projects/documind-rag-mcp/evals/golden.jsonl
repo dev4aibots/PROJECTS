@@ -1,0 +1,15 @@
+{"id":"refund-01","document":"refund_policy.pdf","question":"How long after delivery can a customer request a refund?","gold_page":1,"answerable":true,"keywords":["30","calendar days"]}
+{"id":"refund-02","document":"refund_policy.pdf","question":"Which items are not refundable?","gold_page":1,"answerable":true,"keywords":["final-sale","downloadable software"]}
+{"id":"refund-03","document":"refund_policy.pdf","question":"How quickly are approved refunds returned?","gold_page":2,"answerable":true,"keywords":["5 to 7","business days"]}
+{"id":"refund-04","document":"refund_policy.pdf","question":"Who pays return shipping for a damaged item?","gold_page":2,"answerable":true,"keywords":["unless","damaged"]}
+{"id":"handbook-01","document":"employee_handbook.pdf","question":"How many paid vacation days do full-time employees receive?","gold_page":1,"answerable":true,"keywords":["20","vacation days"]}
+{"id":"handbook-02","document":"employee_handbook.pdf","question":"How many days per week may employees work remotely?","gold_page":2,"answerable":true,"keywords":["three days","week"]}
+{"id":"handbook-03","document":"employee_handbook.pdf","question":"What security controls are required on company devices?","gold_page":2,"answerable":true,"keywords":["disk encryption","multi-factor authentication"]}
+{"id":"product-01","document":"product_spec.pdf","question":"What does the Atlas environmental sensor measure?","gold_page":1,"answerable":true,"keywords":["temperature","humidity","carbon dioxide"]}
+{"id":"product-02","document":"product_spec.pdf","question":"How long does the backup battery operate?","gold_page":2,"answerable":true,"keywords":["8 hours"]}
+{"id":"product-03","document":"product_spec.pdf","question":"How frequently are measurements sampled?","gold_page":2,"answerable":true,"keywords":["60 seconds"]}
+{"id":"unanswerable-01","document":null,"question":"What is the CEO's salary?","gold_page":null,"answerable":false,"keywords":[]}
+{"id":"unanswerable-02","document":null,"question":"Where is the company headquarters?","gold_page":null,"answerable":false,"keywords":[]}
+{"id":"unanswerable-03","document":null,"question":"What was last quarter's revenue?","gold_page":null,"answerable":false,"keywords":[]}
+{"id":"unanswerable-04","document":null,"question":"Who manufactures the Atlas battery cells?","gold_page":null,"answerable":false,"keywords":[]}
+{"id":"unanswerable-05","document":null,"question":"What health insurance provider does Acme use?","gold_page":null,"answerable":false,"keywords":[]}
