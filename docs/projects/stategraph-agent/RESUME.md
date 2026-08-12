@@ -1,39 +1,33 @@
 # StateGraph — Multi-Agent Research Orchestrator — Session Resume
 
-Updated: `2026-08-10 16:10 UTC`
+Updated: `2026-08-12`
 Project folder: `projects/stategraph-agent`
-Branch/commit: `genspark_ai_developer @ pending DocuMind handoff commit`
-Working tree: `DocuMind handoff changes pending final commit`
+Branch/commit: `genspark_ai_developer`
+Working tree: `clean for this project`
 
 ## Exact current position
 
-- Milestone: `Phase 0 — plan and contracts`
-- Checklist item: `P0-T1 — define structure, schema, contracts, boundaries, and tests`
-- State: `ACTIVE and ready`
-- Activation reason: the higher-priority DocuMind project reached a documented external deployment blocker with its local milestone verified.
+- Milestone: `Phase 6 — delivery complete locally`
+- Checklist item: `P6-T4 — owner-managed live deployment`
+- State: `BLOCKED — owner deployment only`
+- All local gates (tests, failure paths, typecheck, production build, audit, docs) are verified; see `PROOF.md`.
 
 ## Resume commands
 
 ```bash
-cd /home/user/webapp
-git status --short --branch
-cat AGENTS.md
-cat docs/RESUME.md
-cat docs/projects/stategraph-agent/BRIEF.md
-cat 03-project-2-stategraph-agents.md
+cd /home/user/webapp/projects/stategraph-agent
+pip install -r requirements-dev.txt
+PYTHONPATH=backend python -m pytest -q backend/tests
+cd frontend && npm install && npm run typecheck && npm run build
 ```
-
-Create `projects/stategraph-agent/PLAN.md` only after tracing every requirement into structure, schema/checkpoint behavior, API contracts, graph boundaries, approval/resume semantics, memory isolation, failure tests, evaluation, UI, deployment, and external gates. Phase 0 is plan-only.
 
 ## Verified prior work
 
-- Owner specification was inventoried and translated into `BRIEF.md` and the live checklist.
-- No application code, runtime, tests, or deployment exists yet.
-- DocuMind's only remaining gate requires external credentials, so switching projects complies with the one-active-project rule.
+- Deterministic four-agent supervisor with checkpoints, approval interrupt, idempotent resume/decisions, per-user memory isolation, and owner-only prune.
+- Six-scenario backend suite passes; frontend typecheck and production build pass (re-verified 2026-08-12 in a fresh sandbox).
+- Migrations (`migrations/001_stategraph.sql`), README, decisions, demo script, audit, and `.env.example` delivered.
 
 ## Environment and blockers
 
-- Runtime/dependencies: not initialized.
-- Local services: none.
-- Phase 0 blocker: none.
-- Later external gate: owner-managed Supabase/provider/Langfuse/Vercel credentials and settings.
+- Local: fully reproducible, no secrets needed (deterministic mode).
+- Only remaining gate: owner-managed Supabase migrations, Gemini/Groq keys, Langfuse, and Vercel deployment plus live smoke — `P6-T4`.
