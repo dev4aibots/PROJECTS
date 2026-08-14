@@ -1,0 +1,15 @@
+BEGIN;
+CREATE TABLE IF NOT EXISTS customers(id bigint PRIMARY KEY,name text NOT NULL,email text NOT NULL,country text NOT NULL,city text NOT NULL,signup_date date NOT NULL,segment text NOT NULL);
+CREATE TABLE IF NOT EXISTS products(id bigint PRIMARY KEY,name text NOT NULL,category text NOT NULL,unit_price numeric(12,2) NOT NULL,cost numeric(12,2) NOT NULL,active boolean NOT NULL);
+CREATE TABLE IF NOT EXISTS orders(id bigint PRIMARY KEY,customer_id bigint NOT NULL REFERENCES customers(id),order_date date NOT NULL,status text NOT NULL,shipping_country text NOT NULL);
+CREATE TABLE IF NOT EXISTS order_items(id bigint PRIMARY KEY,order_id bigint NOT NULL REFERENCES orders(id),product_id bigint NOT NULL REFERENCES products(id),quantity integer NOT NULL,unit_price numeric(12,2) NOT NULL);
+CREATE TABLE IF NOT EXISTS internal_credentials(id bigint PRIMARY KEY,service text NOT NULL,secret text NOT NULL);
+CREATE TABLE IF NOT EXISTS query_audit_logs(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,question text NOT NULL,generated_sql text,final_sql text,validation_status text NOT NULL CHECK(validation_status IN ('allowed','blocked','failed')),rejection_reason text,checks jsonb NOT NULL DEFAULT '[]',duration_ms numeric,row_count integer,model text,created_at timestamptz NOT NULL DEFAULT now());
+DO $$ BEGIN CREATE ROLE nl_query_ro NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM nl_query_ro;
+GRANT USAGE ON SCHEMA public TO nl_query_ro;
+GRANT SELECT ON customers,products,orders,order_items TO nl_query_ro;
+GRANT INSERT ON query_audit_logs TO nl_query_ro;
+ALTER ROLE nl_query_ro SET statement_timeout='5s';
+ALTER ROLE nl_query_ro SET default_transaction_read_only=on;
+COMMIT;

@@ -1,0 +1,7 @@
+fastapi==0.116.1
+httpx==0.28.1
+pydantic==2.13.4
+psycopg[binary,pool]==3.2.9
+pytest==9.0.3
+sqlglot==30.16.0
+uvicorn==0.35.0

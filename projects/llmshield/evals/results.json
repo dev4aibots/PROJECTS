@@ -1,0 +1,11 @@
+{
+  "corpus_version": "1.0.0",
+  "observed_at": "2026-08-12",
+  "cases": 40,
+  "label_counts": {"clean": 15, "injection": 15, "pii": 10},
+  "guards": {
+    "injection": {"tp": 15, "fp": 0, "fn": 0, "tn": 25, "precision": 1.0, "recall": 1.0, "false_positive_rate": 0.0},
+    "pii": {"tp": 10, "fp": 0, "fn": 0, "tn": 30, "precision": 1.0, "recall": 1.0, "false_positive_rate": 0.0}
+  },
+  "scope": "Deterministic frozen fixture; not production traffic or a semantic jailbreak benchmark."
+}

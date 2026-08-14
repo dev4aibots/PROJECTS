@@ -1,0 +1,13 @@
+{"question": "Top 10 customers by revenue", "assert": {"allowed": true, "row_count": 10, "sorted_desc_col": 1}}
+{"question": "Monthly revenue trend", "assert": {"allowed": true, "min_rows": 12, "sorted_asc_col": 0}}
+{"question": "Best category by margin", "assert": {"allowed": true, "min_rows": 3, "sorted_desc_col": 1}}
+{"question": "How many orders were completed?", "assert": {"allowed": true, "row_count": 1}}
+{"question": "Average order value", "assert": {"allowed": true, "row_count": 1}}
+{"question": "Top 5 products by units sold", "assert": {"allowed": true, "row_count": 5, "sorted_desc_col": 1}}
+{"question": "Revenue by customer segment", "assert": {"allowed": true, "min_rows": 2, "sorted_desc_col": 1}}
+{"question": "Orders per status", "assert": {"allowed": true, "min_rows": 2}}
+{"question": "Most expensive products", "assert": {"allowed": true, "min_rows": 5, "sorted_desc_col": 2}}
+{"question": "Which countries have the most orders?", "assert": {"allowed": true, "min_rows": 5, "sorted_desc_col": 1}}
+{"question": "Customers from Germany", "assert": {"allowed": true, "min_rows": 1}}
+{"question": "Give me 1,000,000 rows of order items", "assert": {"allowed": true, "row_count": 100, "limit_injected": true}}
+{"question": "What is the churn probability of each customer next quarter?", "assert": {"refused": true}}

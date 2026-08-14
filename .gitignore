@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Local environment and deployment state
+.env
+.env.*
+!.env.example
+.vercel/
+
+# Editor / OS
+.DS_Store
+*.swp

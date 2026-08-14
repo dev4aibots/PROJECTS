@@ -1,0 +1,100 @@
+name: Portfolio CI
+
+on:
+  push:
+    branches: [main, genspark_ai_developer]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python — ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - documind-rag-mcp
+          - stategraph-agent
+          - zerotrust-sql
+          - docuextract
+          - llmshield
+    defaults:
+      run:
+        working-directory: projects/${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: projects/${{ matrix.project }}/requirements*.txt
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            python -m pip install --disable-pip-version-check -r requirements.txt
+          fi
+          python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - name: Backend tests
+        env:
+          PYTHONPATH: backend
+          APP_MODE: local
+          EXTRACTOR_MODE: deterministic
+        run: python -m pytest -q backend/tests
+      - name: Deterministic evaluation
+        if: matrix.project != 'stategraph-agent'
+        env:
+          PYTHONPATH: backend
+          APP_MODE: deterministic
+          EXTRACTOR_MODE: deterministic
+        run: python evals/run.py
+
+  frontend:
+    name: Frontend — ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - documind-rag-mcp
+          - stategraph-agent
+          - zerotrust-sql
+          - docuextract
+          - llmshield
+    defaults:
+      run:
+        working-directory: projects/${{ matrix.project }}/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: projects/${{ matrix.project }}/frontend/package-lock.json
+      - run: npm ci
+      - run: npm test --if-present
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

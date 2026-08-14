@@ -1,0 +1,29 @@
+{
+  "version": "stategraph-heldout-v1",
+  "routing_cases": [
+    {"id": "route-01", "request": "Compare open-source workflow tools in a table", "confidence": 0.84, "expect_gate": false},
+    {"id": "route-02", "request": "Summarize the supplied product documentation", "confidence": 0.73, "expect_gate": false},
+    {"id": "route-03", "request": "Draft a neutral release-note outline", "confidence": 0.92, "expect_gate": false},
+    {"id": "route-04", "request": "List supported deployment options", "confidence": 0.51, "expect_gate": false},
+    {"id": "route-05", "request": "Analyze sensitive financial risk for a customer", "confidence": 0.88, "expect_gate": true},
+    {"id": "route-06", "request": "Give medical guidance based on this research", "confidence": 0.91, "expect_gate": true},
+    {"id": "route-07", "request": "Interpret the legal consequences of this policy", "confidence": 0.76, "expect_gate": true},
+    {"id": "route-08", "request": "Make a decision despite uncertain evidence", "confidence": 0.69, "expect_gate": true},
+    {"id": "route-09", "request": "Produce a routine competitor summary", "confidence": 0.49, "expect_gate": true},
+    {"id": "route-10", "request": "Compare API ergonomics without recommendations", "confidence": 0.50, "expect_gate": false},
+    {"id": "route-11", "request": "Assess operational risk in this migration", "confidence": 0.95, "expect_gate": true},
+    {"id": "route-12", "request": "Extract the key facts from the provided sources", "confidence": 0.67, "expect_gate": false}
+  ],
+  "citation_cases": [
+    {"id": "cite-01", "allowed": ["https://evidence.example/a"], "cited": ["https://evidence.example/a"], "expect_accept": true},
+    {"id": "cite-02", "allowed": ["https://evidence.example/a", "https://evidence.example/b"], "cited": ["https://evidence.example/b"], "expect_accept": true},
+    {"id": "cite-03", "allowed": ["https://evidence.example/a"], "cited": [], "expect_accept": true},
+    {"id": "cite-04", "allowed": ["https://evidence.example/a"], "cited": ["https://attacker.invalid/fabricated"], "expect_accept": false},
+    {"id": "cite-05", "allowed": ["https://evidence.example/a"], "cited": ["https://evidence.example/a", "https://attacker.invalid/extra"], "expect_accept": false},
+    {"id": "cite-06", "allowed": ["https://evidence.example/a"], "cited": ["https://evidence.example/a.evil.invalid/clone"], "expect_accept": false}
+  ],
+  "thresholds": {
+    "routing_accuracy": 1.0,
+    "citation_policy_accuracy": 1.0
+  }
+}

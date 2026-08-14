@@ -1,0 +1,7 @@
+{
+  "clean_invoice.pdf": "VERIFIED",
+  "broken_total_invoice.pdf": "VERIFICATION_FAILED",
+  "broken_lineitem_invoice.pdf": "VERIFICATION_FAILED",
+  "receipt_photo.png": "VERIFIED",
+  "cat.png": "FAILED_EXTRACTION"
+}
