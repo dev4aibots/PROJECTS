@@ -9,8 +9,8 @@ Five focused proof-of-work projects demonstrating grounded RAG, agent orchestrat
 | Project | Engineering signal | Current readiness |
 |---|---|---|
 | [DocuMind RAG + MCP](projects/documind-rag-mcp) | evidence-gated RAG, pgvector, provider fallback, REST + MCP, citation validation | strong local implementation; identity and hosted proof remain |
-| [ZeroTrust SQL](projects/zerotrust-sql) | SQLGlot AST policy, restricted Postgres adapter, role hardening, attack corpus | Postgres runtime now connected; live role/integration proof remains |
-| [LLMShield](projects/llmshield) | input/output guards, PII redaction, provider fallback, privacy-safe telemetry | auth, distributed limits and stronger held-out eval remain |
+| [ZeroTrust SQL](projects/zerotrust-sql) | scope-aware SQLGlot policy, capability roles, private durable audit, distributed limits, attack corpus | credential-free source complete; owner-hosted role/provider proof remains |
+| [LLMShield](projects/llmshield) | input/output guards, PII redaction, provider fallback, privacy-safe telemetry | current active project: auth, distributed limits and stronger held-out eval remain |
 
 ## Additional projects
 

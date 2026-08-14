@@ -22,12 +22,12 @@ The original bootstrap analysis correctly described the prompt pack before imple
 |---:|---|---|---|
 | 1 | DocuMind | grounded RAG + MCP + evals | 135 backend tests, 3 frontend tests, frozen evaluation, build |
 | 2 | StateGraph | durable workflow + approval + memory | 6 scenario tests covering interrupt/resume/isolation, build |
-| 3 | ZeroTrust SQL | SQL AST security enforcement | 57 tests, 50-case security corpus, 13/13 execution eval, build |
+| 3 | ZeroTrust SQL | SQL AST security enforcement | 78 tests, 50-case security corpus, 13/13 execution eval, 4 browser E2E, build |
 | 4 | DocuExtract | multimodal contracts + Decimal verification | 18 tests, 5/5 deterministic verdict eval, build |
 | 5 | LLMShield | reusable guards + privacy-safe observability | 17 tests, 40/40 frozen corpus, build |
 
 ## Current delivery reality
 
-All credential-free implementation gates are locally terminal. Each core project is `BLOCKED — owner deployment only` (DocuExtract additionally needs live multimodal integration verification). There is no active local coding project. Public completion requires owner-managed credentials/resources, live deployment, post-deploy smoke tests, screenshots, and observed trace evidence.
+StateGraph, DocuExtract, and ZeroTrust SQL are credential-free source complete and `BLOCKED — owner integration only`. LLMShield remains the active local hardening project; DocuMind remains queued for verified identity/RLS work. Public completion requires owner-managed credentials/resources, live deployment, post-deploy smoke tests, screenshots, and observed trace evidence.
 
 Bonus EvalBoard/portfolio work remains deferred by the supplied scope until the five core projects are publicly verified or the owner explicitly changes priority.

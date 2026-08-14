@@ -12,7 +12,7 @@
 | Decoy table defense in depth | verified | allowlist reject in validator AND `PermissionError` at execution layer (tests) | Local layer is SQLite `query_only`, not a real Postgres role |
 | Read-only sandbox, timeout, determinism | verified | `test_database.py` | 5 s timeout tested via progress handler |
 | Failure paths hide internals | verified | `test_api.py`: 503 on generator/db outage, no host leak, still audited | Audit log is process-memory locally |
-| Build/test quality | verified | 57 backend tests pass; `tsc --noEmit` and `next build --webpack` pass | — |
+| Build/test quality | verified | 78 backend tests; frontend typecheck/build; 0 production vulnerabilities; 4 Chromium E2E scenarios | — |
 | Deploy/demo | blocked | None | Requires owner Supabase/provider/Vercel |
 
 ## Verification entries
@@ -24,11 +24,12 @@
 ### 2026-08-12 — Implementation milestone (commits f3f1133, 1ec619c, and this session)
 
 - Environment: Linux sandbox, Python 3.13, sqlglot 30.16.0, pinned `requirements-dev.txt`.
-- Procedure: `cd projects/zerotrust-sql && PYTHONPATH=backend python -m pytest -q backend/tests` → `57 passed`.
+- Procedure: `cd projects/zerotrust-sql && PYTHONPATH=backend .venv/bin/python -m pytest -q backend/tests` → `78 passed` on 2026-08-14.
 - Procedure: `PYTHONPATH=backend python evals/run.py` → `execution_accuracy: 13/13` (includes one honest refusal: churn prediction is unanswerable and returns 503, counted as PASS).
 - Procedure: corpus spot-check script → `safe allowed 25/25, malicious blocked 25/25`.
-- Procedure: `cd frontend && npm install && npm run typecheck && npm run build` → typecheck clean; Next 16.3.0 webpack production build succeeded (static `/` route).
-- Proves: the validation pipeline, sandbox guarantees, attack lab, evals, and UI build are reproducible from a clean checkout with zero secrets.
+- Procedure: `cd frontend && npm ci && npm run typecheck && npm run build && npm audit --omit=dev --audit-level=high` → typecheck clean; Next 16.3.0 build succeeded for `/` and `/app`; 0 vulnerabilities.
+- Procedure: Playwright Chromium against local FastAPI + Next.js → 4/4 scenarios passed: safe query/audit, blocked decoy-table attack, visible LIMIT rewrite, and mobile overflow/accessibility smoke.
+- Proves: the scope-aware validation pipeline, auth/audit/rate-limit contracts, sandbox guarantees, attack lab, evals, UI build, and primary browser flows are reproducible with zero secrets.
 - Does not prove: live Groq/Gemini generation quality, the hosted Postgres `nl_query_ro` role, Langfuse traces, or deployment.
 
 ## Failure-path evidence

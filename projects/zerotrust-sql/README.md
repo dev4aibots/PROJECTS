@@ -4,10 +4,10 @@ Secure natural-language analytics where the model proposes SQL and a determinist
 
 ## Evidence
 
-- 57 backend tests pass.
+- 78 backend tests pass, including scoped authentication, durable audit, rate-limit, lineage, and fail-closed live configuration coverage.
 - Security corpus: 25/25 malicious SQL fixtures blocked; 25/25 safe fixtures allowed.
 - Golden end-to-end evaluation: 13/13 cases pass (one is an expected honest refusal).
-- Next.js `/` and `/app` routes typecheck and build successfully.
+- Next.js `/` and `/app` routes typecheck and build successfully; four Chromium E2E scenarios cover allowed, blocked, bounded-output, and mobile flows.
 - No live database, provider, telemetry, or deployment success is claimed.
 
 ## Architecture
@@ -34,6 +34,7 @@ Open `http://localhost:3000/app`. Local mode needs no secrets.
 PYTHONPATH=backend python -m pytest -q backend/tests
 PYTHONPATH=backend python evals/run.py
 cd frontend && npm ci && npm run typecheck && npm run build
+npx playwright install chromium && npm run test:e2e
 ```
 
 ## API
@@ -44,6 +45,6 @@ Blocked SQL returns the normal response envelope with `security.allowed=false`; 
 
 ## Deployment
 
-Apply `migrations/001_zerotrust.sql`, seed only fictional demo data, connect the backend with the restricted role, configure variables from `.env.example`, deploy API and frontend, then run `scripts/live_smoke.py`. These owner-managed steps remain unverified.
+Apply migrations `001` through `004` in order, seed only fictional demo data, grant the server login membership in the three capability roles, configure variables from `.env.example`, run `scripts/preflight.py`, deploy API and frontend, then run the authenticated `scripts/live_smoke.py`. These owner-managed steps remain unverified.
 
 See `docs/security-model.md`, `docs/evaluation.md`, `docs/limitations.md`, `DECISIONS.md`, `DEMO_SCRIPT.md`, and `AUDIT.md`.

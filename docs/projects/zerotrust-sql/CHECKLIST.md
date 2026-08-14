@@ -14,7 +14,7 @@ Legend: `[ ]` ready · `[~]` in progress · `[x]` verified · `[!]` blocked · `
 
 ## Phase 2 — Core domain logic
 
-- [x] `P2-T1` Implement the seven-check AST validation pipeline with LIMIT rewriting
+- [x] `P2-T1` Implement the seven-check AST validation pipeline with scope-aware alias/CTE/subquery lineage and LIMIT rewriting
 - [x] `P2-T2` Implement and test the security boundary: all 8 attack-lab prompts blocked with the failing check named
 
 ## Phase 3 — Services and providers
@@ -32,10 +32,11 @@ Legend: `[ ]` ready · `[~]` in progress · `[x]` verified · `[!]` blocked · `
 - [x] `P5-T1` 50-fixture corpus (25 safe / 25 malicious) as a versioned test gate
 - [-] `P5-T2` Langfuse tracing deferred to owner-managed live configuration
 - [x] `P5-T3` Golden-query eval saved and reproducible (`evals/run.py` → 13/13)
+- [x] `P5-T4` Add scoped bearer auth, privacy-safe durable audit, distributed rate limiting, and correlated request IDs
 
 ## Phase 6 — Delivery and audit
 
-- [x] `P6-T1` Backend tests (57 passed), frontend typecheck, and Next production build verified
+- [x] `P6-T1` Backend tests (78 passed), frontend typecheck, Next production build, dependency audit, and four Chromium E2E scenarios verified
 - [x] `P6-T2` API/UI flows traced; adversarial audit recorded in `projects/zerotrust-sql/AUDIT.md`
 - [x] `P6-T3` README, decisions, limitations, demo script, proof, and resume synchronized
 - [!] `P6-T4` Deploy and smoke-test live environment
@@ -46,4 +47,4 @@ Legend: `[ ]` ready · `[~]` in progress · `[x]` verified · `[!]` blocked · `
 - Terminal status: `BLOCKED — owner deployment only`
 - Current item: `P6-T4 — owner-managed live deployment`
 - Critical/high findings open: `0` (see `projects/zerotrust-sql/AUDIT.md`)
-- Strongest proof: `PYTHONPATH=backend pytest -q backend/tests` → 57 passed; corpus 25/25 malicious blocked, 25/25 safe allowed; `evals/run.py` → 13/13; frontend `tsc --noEmit` and `next build --webpack` passed 2026-08-12.
+- Strongest proof: `PYTHONPATH=backend pytest -q backend/tests` → 78 passed; corpus 25/25 malicious blocked, 25/25 safe allowed; `evals/run.py` → 13/13; frontend typecheck/build/audit and four Chromium E2E scenarios passed 2026-08-14.
