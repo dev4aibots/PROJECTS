@@ -3,15 +3,37 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from fastapi import FastAPI, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from .auth import Principal, require_gateway_principal, require_telemetry_principal
 from .models import GatewayRequest
 from .observability import LangfuseHttpSink, NullTraceSink
 from .providers import DeterministicProvider, FallbackProvider, GeminiProvider, GroqProvider
+from .rate_limit import RateLimitExceeded, RateLimiter, build_rate_limiter
 from .repository import MemoryLogRepository, PostgresLogRepository
 from .service import GatewayFailure, GatewayService
+
+
+def validate_live_configuration() -> None:
+    """Fail closed when live traffic would use local-only security controls."""
+    live = os.getenv("PROVIDER_MODE", "deterministic").lower() == "live"
+    database_url = os.getenv("DATABASE_URL", "").strip()
+    if not live and not database_url:
+        return
+    if live and not database_url:
+        raise RuntimeError("DATABASE_URL is required for distributed limits in live mode")
+    if os.getenv("AUTH_MODE", "").lower() != "required":
+        raise RuntimeError("AUTH_MODE must be required in live mode")
+    for name in (
+        "GATEWAY_API_KEYS",
+        "TELEMETRY_API_KEYS",
+        "AUTH_FINGERPRINT_KEY",
+        "RATE_LIMIT_HASH_KEY",
+    ):
+        if len(os.getenv(name, "").strip()) < 32:
+            raise RuntimeError(f"{name} must contain at least 32 characters in live mode")
 
 
 ATTACKS = [
@@ -54,29 +76,61 @@ def build_service() -> GatewayService:
     )
 
 
-def create_app(service: GatewayService | None = None) -> FastAPI:
-    app = FastAPI(title="LLMShield", version="1.0.0")
+def create_app(
+    service: GatewayService | None = None,
+    rate_limiter: RateLimiter | None = None,
+) -> FastAPI:
+    validate_live_configuration()
+    app = FastAPI(title="LLMShield", version="1.1.0")
     origins = [value.strip() for value in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",") if value.strip()]
     app.add_middleware(
         CORSMiddleware, allow_origins=origins, allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"],
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+        expose_headers=["X-Request-ID", "Retry-After"],
     )
     app.state.gateway_service = service or build_service()
+    app.state.rate_limiter = rate_limiter or build_rate_limiter()
 
     @app.post("/api/gateway")
-    def gateway(body: GatewayRequest):
+    def gateway(
+        body: GatewayRequest,
+        request: Request,
+        response: Response,
+        principal: Principal = Depends(require_gateway_principal),
+    ):
+        from uuid import uuid4
+
+        request_id = request.headers.get("X-Request-ID") or str(uuid4())
+        response.headers["X-Request-ID"] = request_id
+        client_ip = request.client.host if request.client else "unknown"
+        try:
+            app.state.rate_limiter.check(principal.principal_id, client_ip)
+        except RateLimitExceeded as exc:
+            raise HTTPException(
+                status_code=429,
+                detail="request quota exceeded; retry later",
+                headers={"Retry-After": str(exc.retry_after_seconds), "X-Request-ID": request_id},
+            )
         try:
             return app.state.gateway_service.process(body)
         except GatewayFailure as exc:
-            return JSONResponse(status_code=exc.status_code, content=exc.envelope.model_dump(mode="json"))
+            return JSONResponse(
+                status_code=exc.status_code,
+                content=exc.envelope.model_dump(mode="json"),
+                headers={"X-Request-ID": request_id},
+            )
 
     @app.get("/api/logs")
-    def recent(limit: int = Query(default=50, ge=1, le=100)) -> dict[str, Any]:
+    def recent(
+        limit: int = Query(default=50, ge=1, le=100),
+        _principal: Principal = Depends(require_telemetry_principal),
+    ) -> dict[str, Any]:
         rows = app.state.gateway_service.repository.recent(limit)
         return {"logs": [row.model_dump(mode="json") for row in rows]}
 
     @app.get("/api/stats")
-    def stats():
+    def stats(_principal: Principal = Depends(require_telemetry_principal)):
         return app.state.gateway_service.repository.stats()
 
     @app.get("/api/attacks")
