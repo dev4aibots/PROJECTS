@@ -10,6 +10,7 @@ node_modules/
 out/
 test-results/
 playwright-report/
+.cache/
 *.tsbuildinfo
 
 # Local environment and deployment state
