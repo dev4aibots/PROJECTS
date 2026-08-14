@@ -73,6 +73,7 @@ class PostgresLogRepository:
 
     def add(self, row: RequestLog) -> None:
         with self._connect() as connection, connection.cursor() as cursor:
+            cursor.execute("SET LOCAL ROLE llmshield_log_writer")
             cursor.execute(
                 """INSERT INTO request_logs
                 (id, prompt_sha256, security_status, blocked_by, provider,
@@ -87,6 +88,7 @@ class PostgresLogRepository:
 
     def recent(self, limit: int) -> list[RequestLog]:
         with self._connect() as connection, connection.cursor() as cursor:
+            cursor.execute("SET LOCAL ROLE llmshield_log_writer")
             cursor.execute(
                 """SELECT id, prompt_sha256, security_status, blocked_by, provider,
                 fallback_used, latency_ms, token_usage, created_at
@@ -104,6 +106,7 @@ class PostgresLogRepository:
 
     def stats(self) -> Stats:
         with self._connect() as connection, connection.cursor() as cursor:
+            cursor.execute("SET LOCAL ROLE llmshield_log_writer")
             cursor.execute(
                 """SELECT COUNT(*),
                 COALESCE(100.0 * COUNT(*) FILTER (WHERE security_status='blocked') / NULLIF(COUNT(*),0), 0),
