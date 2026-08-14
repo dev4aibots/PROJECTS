@@ -37,20 +37,28 @@ export default function AttackConsole() {
   const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [telemetryError, setTelemetryError] = useState('');
+  const [gatewayToken, setGatewayToken] = useState('');
+  const [telemetryToken, setTelemetryToken] = useState('');
+
+  const authorization = (token: string): HeadersInit => token ? { Authorization: `Bearer ${token}` } : {};
 
   const refresh = useCallback(async () => {
+    setTelemetryError('');
+    const headers = authorization(telemetryToken);
     const [nextStats, nextLogs] = await Promise.all([
-      readJson<Stats>('/api/stats'),
-      readJson<{ logs: Log[] }>('/api/logs?limit=8'),
+      readJson<Stats>('/api/stats', { headers }),
+      readJson<{ logs: Log[] }>('/api/logs?limit=8', { headers }),
     ]);
     setStats(nextStats);
     setLogs(nextLogs.logs);
-  }, []);
+  }, [telemetryToken]);
 
   useEffect(() => {
-    Promise.all([readJson<{ attacks: Attack[] }>('/api/attacks'), refresh()])
-      .then(([attackData]) => setAttacks(attackData.attacks))
+    readJson<{ attacks: Attack[] }>('/api/attacks')
+      .then((attackData) => setAttacks(attackData.attacks))
       .catch(() => setError('The gateway is unavailable. Start the API or verify NEXT_PUBLIC_API_BASE_URL.'));
+    refresh().catch(() => setTelemetryError('Private telemetry is locked. Enter a telemetry-scoped token to load it.'));
   }, [refresh]);
 
   async function run(nextPrompt = prompt) {
@@ -62,11 +70,11 @@ export default function AttackConsole() {
     try {
       const body = await readJson<GatewayResult>('/api/gateway', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', ...authorization(gatewayToken) },
         body: JSON.stringify({ prompt: nextPrompt }),
       });
       setResult(body);
-      await refresh();
+      await refresh().catch(() => setTelemetryError('Request completed, but private telemetry remains locked.'));
     } catch {
       setError('The request could not be completed. Check the API health endpoint and try again.');
     } finally {
@@ -91,6 +99,16 @@ export default function AttackConsole() {
       <nav><Link href="/">← Home</Link><b>ATTACK CONSOLE</b></nav>
       <aside>Heuristic guards — defense in depth, not a guarantee.</aside>
 
+      <section className="credentials" aria-labelledby="access-heading">
+        <div className="resultHeading"><h2 id="access-heading">Scoped access</h2><small>Tokens stay in memory and are never persisted by this page.</small></div>
+        <div className="credentialGrid">
+          <label>Gateway token<input type="password" autoComplete="off" value={gatewayToken} onChange={(event) => setGatewayToken(event.target.value)} placeholder="Optional in local mode" /></label>
+          <label>Telemetry token<input type="password" autoComplete="off" value={telemetryToken} onChange={(event) => setTelemetryToken(event.target.value)} placeholder="Required for private logs/stats" /></label>
+        </div>
+        <button type="button" className="secondary" onClick={() => refresh().catch(() => setTelemetryError('The telemetry token was rejected.'))}>Unlock telemetry</button>
+      </section>
+
+      {telemetryError && <p className="notice" role="status">{telemetryError}</p>}
       <div className="stats">
         {statCards.map(([label, value]) => <div key={label}><small>{label}</small><b>{value}</b></div>)}
       </div>
