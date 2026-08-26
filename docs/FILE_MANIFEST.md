@@ -78,14 +78,14 @@
 
 | File | Status |
 |---|---|
-| `docs/projects/selfheal-scraper/BRIEF.md` | ⬜ |
-| `docs/projects/selfheal-scraper/RESUME.md` | ⬜ |
-| `api/index.py` (FastAPI: scrape, products, selectors, cron; mock pages v1/v2 inline) | ⬜ |
-| `requirements.txt` | ⬜ |
-| `vercel.json` (with crons) | ⬜ |
-| `public/index.html` | ⬜ |
-| `tests/test_scraper.py` | ⬜ |
-| `README.md` | ⬜ |
+| `docs/projects/selfheal-scraper/BRIEF.md` | ✅ |
+| `docs/projects/selfheal-scraper/RESUME.md` | ✅ |
+| `api/index.py` (FastAPI: scrape, products, selectors, cron; mock pages v1/v2 inline) | ✅ |
+| `requirements.txt` | ✅ |
+| `vercel.json` (with crons) | ✅ |
+| `public/index.html` | ✅ |
+| `tests/test_scraper.py` | ✅ |
+| `README.md` | ✅ |
 
 ## P6 ModGuard — `projects/06-modguard-moderation/`
 

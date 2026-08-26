@@ -6,14 +6,14 @@
 ## Checkpoints
 | # | Checkpoint | Status |
 |---|-----------|--------|
-| C1 | Backend implemented (all endpoints, demo mode + real-API paths) | ⬜ |
-| C2 | Dashboard (public/index.html, 5-element formula) | ⬜ |
-| C3 | Tests written & green | ⬜ |
-| C4 | README + vercel.json + local run verified | ⬜ |
-| C5 | Manifest/checkpoint docs updated, committed | ⬜ |
+| C1 | Backend implemented (all endpoints, demo mode + real-API paths) | ✅ |
+| C2 | Dashboard (public/index.html, 5-element formula) | ✅ |
+| C3 | Tests written & green | ✅ (8 passed) |
+| C4 | README + vercel.json + local run verified | ✅ (uvicorn smoke: v1 css → v2 heal v2-bump → v2 converged, drop alerts fired) |
+| C5 | Manifest/checkpoint docs updated, committed | ✅ |
 
 ## NEXT ACTION
-> Start C1: create the backend per BRIEF.md architecture. Mark each finished file in docs/FILE_MANIFEST.md.
+> P5 COMPLETE. Move to P6 (docs/projects/modguard-moderation/RESUME.md).
 
 ## Blockers
 None.

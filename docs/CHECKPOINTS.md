@@ -14,14 +14,15 @@
 | 2 | LeadFlow Enrichment | `projects/02-leadflow-enrichment` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
 | 3 | DuraSupport | `projects/03-durable-support` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
 | 4 | ZeroTrust-SQL | `projects/04-zerotrust-sql` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
-| 5 | SelfHeal Scraper | `projects/05-selfheal-scraper` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
+| 5 | SelfHeal Scraper | `projects/05-selfheal-scraper` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
 | 6 | ModGuard Moderation | `projects/06-modguard-moderation` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 | 7 | MCP Gateway | `projects/07-mcp-gateway` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 
 ## Active project
-**#5 SelfHeal Scraper** — P1–P4 done & verified. Building P5 next.
+**#6 ModGuard Moderation** — P1–P5 done & verified. Building P6 next.
 
 ## Session log (append-only, newest first)
+- **2026-08-26 · session #5 (cont.)**: P5 SelfHeal Scraper built — CSS fast path, heuristic/LLM heal with validated selector derivation (data-sku anchors), registry versioning, drop alerts, cron, dashboard, 8 tests green.
 - **2026-08-26 · session #5**: P4 ZeroTrust-SQL rebuilt after sandbox reset — sqlglot AST interceptor (16 tests green), NL→SQL, read-only warehouse, audit log, dashboard with injection demo, uvicorn smoke verified.
 - **2026-08-26 · session #4**: P3 DuraSupport built — durable pause/resume state machine, approval gates, 409 idempotency guard, dashboard, smoke tests green.
 - **2026-08-26 · session #3**: P2 LeadFlow rebuilt after sandbox reset (engine, endpoints, dashboard, smoke tests green, dev-server curl verified).
