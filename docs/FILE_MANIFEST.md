@@ -50,16 +50,16 @@
 
 | File | Status |
 |---|---|
-| `docs/projects/durable-support/BRIEF.md` | ⬜ |
-| `docs/projects/durable-support/RESUME.md` | ⬜ |
-| `api/_lib.js` (KB + vector-ish retrieval, workflow state machine, store) | ⬜ |
-| `api/tickets.js` | ⬜ |
-| `api/approve.js` | ⬜ |
-| `api/health.js` | ⬜ |
-| `public/index.html` | ⬜ |
-| `vercel.json` | ⬜ |
-| `tests/smoke.test.js` | ⬜ |
-| `README.md` | ⬜ |
+| `docs/projects/durable-support/BRIEF.md` | ✅ |
+| `docs/projects/durable-support/RESUME.md` | ✅ |
+| `api/_lib.js` (KB + vector-ish retrieval, workflow state machine, store) | ✅ |
+| `api/tickets.js` | ✅ |
+| `api/approve.js` | ✅ |
+| `api/health.js` | ✅ |
+| `public/index.html` | ✅ |
+| `vercel.json` | ✅ |
+| `tests/smoke.test.js` | ✅ |
+| `README.md` | ✅ |
 
 ## P4 ZeroTrust-SQL — `projects/04-zerotrust-sql/`
 

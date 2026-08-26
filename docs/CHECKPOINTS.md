@@ -12,16 +12,17 @@
 | 0 | Repo docs system (AGENTS, MASTER_PLAN, protocol, manifests, deployment) | `docs/` | ✅ | — | — | — | — | ✅ DONE |
 | 1 | FinAudit IDP | `projects/01-finaudit-idp` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
 | 2 | LeadFlow Enrichment | `projects/02-leadflow-enrichment` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
-| 3 | DuraSupport | `projects/03-durable-support` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
+| 3 | DuraSupport | `projects/03-durable-support` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ DONE |
 | 4 | ZeroTrust-SQL | `projects/04-zerotrust-sql` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 | 5 | SelfHeal Scraper | `projects/05-selfheal-scraper` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 | 6 | ModGuard Moderation | `projects/06-modguard-moderation` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 | 7 | MCP Gateway | `projects/07-mcp-gateway` | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ TODO |
 
 ## Active project
-**#3 DuraSupport** — P1+P2 done & verified. Building P3 next.
+**#4 ZeroTrust-SQL** — P1–P3 done & verified. Building P4 next.
 
 ## Session log (append-only, newest first)
+- **2026-08-26 · session #4**: P3 DuraSupport built — durable pause/resume state machine, approval gates, 409 idempotency guard, dashboard, smoke tests green.
 - **2026-08-26 · session #3**: P2 LeadFlow rebuilt after sandbox reset (engine, endpoints, dashboard, smoke tests green, dev-server curl verified).
 - **2026-08-26 · session #2**: P1 FinAudit IDP built end-to-end (backend, dashboard, 8 tests green, README, vercel.json, local uvicorn smoke verified).
 - **2026-08-26 · session #1**: Deleted legacy 5-project portfolio (documind-rag-mcp, stategraph-agent, old zerotrust-sql, docuextract, llmshield) per owner instruction. Writing new resumable docs system for the 7-project spec.
