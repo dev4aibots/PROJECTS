@@ -36,15 +36,15 @@
 
 | File | Status |
 |---|---|
-| `docs/projects/leadflow-enrichment/BRIEF.md` | ⬜ |
-| `docs/projects/leadflow-enrichment/RESUME.md` | ⬜ |
-| `api/_lib.js` (store, enrichment engine, grading, slack) | ⬜ |
-| `api/leads.js` | ⬜ |
-| `api/health.js` | ⬜ |
-| `public/index.html` | ⬜ |
-| `vercel.json` | ⬜ |
-| `tests/smoke.test.js` | ⬜ |
-| `README.md` | ⬜ |
+| `docs/projects/leadflow-enrichment/BRIEF.md` | ✅ |
+| `docs/projects/leadflow-enrichment/RESUME.md` | ✅ |
+| `api/_lib.js` (store, enrichment engine, grading, slack) | ✅ |
+| `api/leads.js` | ✅ |
+| `api/health.js` | ✅ |
+| `public/index.html` | ✅ |
+| `vercel.json` | ✅ |
+| `tests/smoke.test.js` | ✅ |
+| `README.md` | ✅ |
 
 ## P3 DuraSupport — `projects/03-durable-support/`
 
