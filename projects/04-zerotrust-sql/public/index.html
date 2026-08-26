@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZeroTrust-SQL — AST SQL Guardrails for NL Analytics</title>
+<style>
+:root{--bg:#0b1020;--panel:#131a2e;--panel2:#1a2340;--line:#26304f;--text:#e6ebff;--dim:#8b96b8;--acc:#6d8bff;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5d6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}
+header{margin-bottom:20px}
+h1{font-size:26px}
+h1 .tag{font-size:12px;background:var(--acc);color:#fff;border-radius:20px;padding:2px 10px;vertical-align:middle;margin-left:8px}
+.sub{color:var(--dim);margin-top:4px}
+.links{margin-top:8px;font-size:13px}
+.links a{color:var(--acc);text-decoration:none;margin-right:14px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--acc)}
+label{display:block;font-size:12px;color:var(--dim);margin:8px 0 3px}
+input,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;font:inherit}
+textarea{min-height:70px;resize:vertical;font-family:var(--mono);font-size:13px}
+button{background:var(--acc);border:0;border-radius:8px;color:#fff;padding:9px 16px;font:600 14px inherit;cursor:pointer;margin-top:10px}
+button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--panel2);border:1px solid var(--line)}
+button.bad{background:var(--bad)}
+.samples button{width:100%;text-align:left;margin-top:8px;background:var(--panel2);border:1px solid var(--line);font-weight:500}
+.samples button.attack{border-color:var(--bad);color:var(--bad)}
+.samples .hint{font-size:12px;color:var(--dim)}
+.stepper{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.step{font-size:12px;border:1px solid var(--line);border-radius:16px;padding:3px 10px;color:var(--dim);background:var(--panel2)}
+.step.on{border-color:var(--acc);color:var(--text);background:rgba(109,139,255,.15)}
+.step.done{border-color:var(--ok);color:var(--ok)}
+.step.blocked{border-color:var(--bad);color:var(--bad)}
+.badge{display:inline-block;font-size:11px;border-radius:12px;padding:2px 9px;font-weight:700}
+.b-APPROVED{background:rgba(61,220,132,.15);color:var(--ok)}
+.b-BLOCKED{background:rgba(255,93,108,.15);color:var(--bad)}
+pre{background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.5 var(--mono);color:#c8d4ff;white-space:pre-wrap}
+.sqlbox{font-family:var(--mono);font-size:13px;background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:#9fd0ff;white-space:pre-wrap;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:6px 8px}
+th{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.reason{font-size:13px;color:var(--dim);margin:6px 0}
+.reason.bad{color:var(--bad)}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{margin-top:0}
+.tabs button.off{background:var(--panel2);border:1px solid var(--line);color:var(--dim)}
+canvas{width:100%;max-width:100%;background:#0a0f1e;border:1px solid var(--line);border-radius:8px;margin-top:10px}
+.meta{font-size:12px;color:var(--dim);margin-top:6px}
+.audit-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--panel2)}
+.audit-item .sql{font-family:var(--mono);font-size:12px;color:#9fd0ff;margin-top:4px;word-break:break-all}
+.audit-item .m{font-size:12px;color:var(--dim)}
+.toggle{font-size:12px;color:var(--acc);cursor:pointer;user-select:none;margin-top:10px;display:inline-block}
+.empty{color:var(--dim);font-size:13px;padding:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🛡️ ZeroTrust-SQL <span class="tag" id="mode">demo</span></h1>
+  <div class="sub">Ask analytics questions in English. Every SQL statement — LLM-written or hand-typed — passes an <b>sqlglot AST safety interceptor</b> before a read-only warehouse. Destructive ops never reach the database.</div>
+  <div class="links"><a href="/docs" target="_blank">API docs (Swagger)</a><a href="/api/health" target="_blank">/api/health</a><a href="/api/schema" target="_blank">/api/schema</a><a href="/api/audit" target="_blank">/api/audit</a></div>
+</header>
+
+<div class="grid">
+<div>
+  <div class="card samples">
+    <h2>1 · Ask a question</h2>
+    <div class="hint">Natural language → SQL → AST check → results. Or try to break it.</div>
+    <button onclick="ask('What are the top selling products?')">📈 Top selling products</button>
+    <button onclick="ask('Show revenue by country')">🌍 Revenue by country</button>
+    <button onclick="ask('Monthly revenue trend')">📅 Monthly revenue trend</button>
+    <button onclick="ask('Average order value')">💰 Average order value</button>
+    <button onclick="ask('Revenue by customer segment')">🏢 Revenue by segment</button>
+    <button class="attack" onclick="rawSql('SELECT * FROM orders; DROP TABLE orders;')">☠️ Try an injection attack (multi-statement DROP)</button>
+    <button class="attack" onclick="rawSql('UPDATE orders SET status = &quot;refunded&quot;')">☠️ Try a mass UPDATE</button>
+    <button class="attack" onclick="rawSql('SELECT * FROM sqlite_master')">☠️ Probe schema table (outside allow-list)</button>
+    <label>Your own question</label>
+    <input id="q" placeholder="e.g. revenue by category" onkeydown="if(event.key==='Enter')ask(document.getElementById('q').value)">
+    <button onclick="ask(document.getElementById('q').value)">Ask</button>
+    <label>…or raw SQL (goes through the same guard)</label>
+    <textarea id="rawsql" placeholder="SELECT name, price FROM products ORDER BY price DESC"></textarea>
+    <button class="ghost" onclick="rawSql(document.getElementById('rawsql').value)">Run SQL through guard</button>
+  </div>
+  <div class="card">
+    <h2>Warehouse schema (allow-list)</h2>
+    <pre id="schema">loading…</pre>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>2 · Pipeline</h2>
+    <div class="stepper" id="stepper">
+      <span class="step">Question</span><span class="step">Schema inspected</span><span class="step">SQL generated</span><span class="step">AST safety check</span><span class="step">Executed on read-only DB</span>
+    </div>
+    <div class="tabs">
+      <button id="tab-result" onclick="showTab('result')">Result</button>
+      <button id="tab-audit" class="off" onclick="showTab('audit');loadAudit()">Audit log</button>
+    </div>
+
+    <div id="pane-result">
+      <div id="out" class="empty">Run a sample question — or an injection attack — to see the guard in action.</div>
+    </div>
+    <div id="pane-audit" style="display:none">
+      <div id="audit" class="empty">No audit entries yet.</div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+let lastJson = null;
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  return r.json();
+}
+
+function setSteps(n, blocked) {
+  const steps = $('stepper').children;
+  for (let i = 0; i < steps.length; i++) {
+    steps[i].className = 'step' + (i < n ? ' done' : i === n ? (blocked ? ' blocked' : ' on') : '');
+  }
+}
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function render(d) {
+  lastJson = d;
+  const blocked = d.ast_verdict === 'BLOCKED';
+  setSteps(blocked ? 3 : 5, blocked);
+  let h = '';
+  if (d.question) h += `<div class="meta">Q: <b>${esc(d.question)}</b> · generator: ${esc(d.generator)} · ${d.latency_ms} ms</div>`;
+  else h += `<div class="meta">raw SQL · ${d.latency_ms} ms</div>`;
+  h += `<div style="margin:8px 0"><span class="badge b-${d.ast_verdict}">AST ${d.ast_verdict}</span></div>`;
+  h += `<div class="sqlbox">${esc(d.sql)}</div>`;
+  h += `<div class="reason ${blocked?'bad':''}">${esc(d.reason)}</div>`;
+  if (!blocked) {
+    if (d.rows.length) {
+      h += '<table><thead><tr>' + d.columns.map(c=>`<th>${esc(c)}</th>`).join('') + '</tr></thead><tbody>';
+      for (const row of d.rows.slice(0, 25)) h += '<tr>' + row.map(v=>`<td>${esc(v===null?'∅':v)}</td>`).join('') + '</tr>';
+      h += '</tbody></table>';
+      if (d.rows.length > 25) h += `<div class="meta">…showing 25 of ${d.row_count} rows</div>`;
+    } else h += '<div class="empty">0 rows</div>';
+    if (d.chart && d.chart.type === 'bar') h += '<canvas id="chart" width="760" height="260"></canvas>';
+  }
+  h += '<span class="toggle" onclick="toggleJson()">{ } raw JSON</span><pre id="rawjson" style="display:none"></pre>';
+  $('out').innerHTML = h;
+  $('out').className = '';
+  if (!blocked && d.chart && d.chart.type === 'bar') drawChart(d);
+}
+
+function drawChart(d) {
+  const cv = $('chart'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const xi = d.columns.indexOf(d.chart.x), yi = d.columns.indexOf(d.chart.y);
+  if (xi < 0 || yi < 0) return;
+  const data = d.rows.slice(0, 12);
+  const max = Math.max(...data.map(r => +r[yi] || 0), 1);
+  const W = cv.width, H = cv.height, pad = 34, bw = (W - pad * 2) / data.length;
+  ctx.clearRect(0, 0, W, H);
+  data.forEach((r, i) => {
+    const v = +r[yi] || 0, h = (H - pad * 2) * v / max;
+    ctx.fillStyle = '#6d8bff';
+    ctx.fillRect(pad + i * bw + bw * .15, H - pad - h, bw * .7, h);
+    ctx.fillStyle = '#8b96b8'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(String(r[xi]).slice(0, 10), pad + i * bw + bw / 2, H - pad + 13);
+    ctx.fillStyle = '#c8d4ff';
+    ctx.fillText(Math.round(v).toLocaleString(), pad + i * bw + bw / 2, H - pad - h - 5);
+  });
+}
+
+function toggleJson() {
+  const p = $('rawjson');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  p.textContent = JSON.stringify(lastJson, null, 2);
+}
+
+async function ask(q) {
+  if (!q || !q.trim()) return;
+  $('q').value = q;
+  setSteps(1, false);
+  $('out').innerHTML = '<div class="empty">running…</div>';
+  showTab('result');
+  render(await api('/api/query', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q})}));
+}
+
+async function rawSql(sql) {
+  if (!sql || !sql.trim()) return;
+  $('rawsql').value = sql;
+  setSteps(3, false);
+  $('out').innerHTML = '<div class="empty">running…</div>';
+  showTab('result');
+  render(await api('/api/sql', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sql})}));
+}
+
+function showTab(t) {
+  $('pane-result').style.display = t === 'result' ? '' : 'none';
+  $('pane-audit').style.display = t === 'audit' ? '' : 'none';
+  $('tab-result').className = t === 'result' ? '' : 'off';
+  $('tab-audit').className = t === 'audit' ? '' : 'off';
+}
+
+async function loadAudit() {
+  const d = await api('/api/audit');
+  if (!d.entries.length) { $('audit').innerHTML = '<div class="empty">No audit entries yet.</div>'; return; }
+  $('audit').innerHTML = d.entries.map(e => `
+    <div class="audit-item">
+      <span class="badge b-${e.verdict}">${e.verdict}</span>
+      <span class="m">${e.at} · ${e.source}${e.question ? ' · “' + esc(e.question) + '”' : ''}</span>
+      <div class="sql">${esc(e.sql)}</div>
+      <div class="m">${esc(e.reason)}${e.rows !== undefined ? ' · ' + e.rows + ' rows' : ''}</div>
+    </div>`).join('');
+}
+
+async function init() {
+  try {
+    const h = await api('/api/health');
+    $('mode').textContent = h.mode;
+    const s = await api('/api/schema');
+    $('schema').textContent = Object.entries(s.tables).map(([t, cols]) => `${t}(${cols.join(', ')})`).join('\n')
+      + `\n\nmax LIMIT enforced: ${s.max_limit}`;
+  } catch (e) { $('schema').textContent = 'API unreachable: ' + e.message; }
+}
+init();
+</script>
+</body>
+</html>

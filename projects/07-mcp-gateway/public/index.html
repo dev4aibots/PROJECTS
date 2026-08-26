@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Gateway — Protocol-Level Tool Host with Auth, Rate Limits &amp; Traces</title>
+<style>
+:root{--bg:#0b1020;--panel:#131a2e;--panel2:#1a2340;--line:#26304f;--text:#e6ebff;--dim:#8b96b8;--acc:#6d8bff;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5d6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}
+header{margin-bottom:20px}
+h1{font-size:26px}
+h1 .tag{font-size:12px;background:var(--acc);color:#fff;border-radius:20px;padding:2px 10px;vertical-align:middle;margin-left:8px}
+.sub{color:var(--dim);margin-top:4px}
+.grid{display:grid;grid-template-columns:400px 1fr;gap:18px}
+@media(max-width:920px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--acc)}
+label{display:block;font-size:12px;color:var(--dim);margin:8px 0 3px}
+select,input,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;font:inherit}
+textarea{min-height:110px;resize:vertical;font-family:var(--mono);font-size:12px}
+button{background:var(--acc);border:0;border-radius:8px;color:#fff;padding:9px 16px;font:600 14px inherit;cursor:pointer;margin-top:10px}
+button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--panel2);border:1px solid var(--line)}
+button.warn{background:var(--warn);color:#201500}
+.stepper{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.step{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--line);color:var(--dim);background:var(--panel2)}
+.step.on{border-color:var(--ok);color:var(--ok)}
+.step.err{border-color:var(--bad);color:var(--bad)}
+pre{background:#0a0f1d;border:1px solid var(--line);border-radius:8px;padding:12px;font:12px/1.5 var(--mono);overflow:auto;max-height:340px;white-space:pre-wrap;word-break:break-word}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:920px){.duo{grid-template-columns:1fr}}
+.duo h3{font-size:12px;color:var(--dim);margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:600}
+td.mono{font-family:var(--mono);font-size:11px}
+.pill{font-size:11px;padding:1px 8px;border-radius:20px}
+.pill.ok{background:rgba(61,220,132,.15);color:var(--ok)}
+.pill.bad{background:rgba(255,93,108,.15);color:var(--bad)}
+.kv{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.kv .box{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:110px}
+.kv .n{font-size:20px;font-weight:700}
+.kv .l{font-size:11px;color:var(--dim)}
+.bucketbar{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:4px}
+.bucketbar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.note{font-size:12px;color:var(--dim);margin-top:8px}
+.kb{font-size:13px}
+.kb li{margin:6px 0 6px 18px}
+.kb .sc{color:var(--dim);font-family:var(--mono);font-size:11px}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🔌 MCP Gateway <span class="tag">JSON-RPC 2.0 · MCP 2024-11-05</span></h1>
+  <div class="sub">Protocol-level tool host: API-key auth → token-bucket rate limit → scoped dispatch → traced. The raw JSON below <em>is</em> the protocol an agent (Claude Desktop, Cursor) speaks.</div>
+</header>
+
+<div class="grid">
+<div>
+  <div class="card">
+    <h2>1 · Playground</h2>
+    <label>API key</label>
+    <select id="key">
+      <option value="mcp_demo_readonly">mcp_demo_readonly — scopes: read</option>
+      <option value="mcp_demo_admin">mcp_demo_admin — scopes: read, write</option>
+      <option value="bad_key_123">bad_key_123 — invalid (auth failure demo)</option>
+    </select>
+    <label>Method / tool</label>
+    <select id="method">
+      <option value="initialize">initialize</option>
+      <option value="tools/list">tools/list</option>
+      <option value="get_customer_record">tools/call → get_customer_record</option>
+      <option value="query_inventory">tools/call → query_inventory</option>
+      <option value="trigger_refund">tools/call → trigger_refund (needs write scope)</option>
+      <option value="search_knowledge_base">tools/call → search_knowledge_base</option>
+    </select>
+    <label>Arguments (JSON)</label>
+    <textarea id="args"></textarea>
+    <button id="send">Send JSON-RPC request</button>
+    <button id="burst" class="warn">Burst 25 calls (rate-limit demo)</button>
+    <div class="stepper" id="stepper">
+      <span class="step" id="st-auth">1 Auth</span>
+      <span class="step" id="st-rate">2 Rate limit</span>
+      <span class="step" id="st-dispatch">3 Dispatch</span>
+      <span class="step" id="st-trace">4 Traced</span>
+    </div>
+    <div class="note" id="bucketNote">Bucket: capacity 20 · refill 10/min</div>
+    <div class="bucketbar"><i id="bucketFill" style="width:100%"></i></div>
+  </div>
+
+  <div class="card">
+    <h2>Connect from Claude Desktop / Cursor</h2>
+    <pre id="cfg"></pre>
+    <div class="note">Any MCP-over-HTTP client can POST JSON-RPC to <code>/api/mcp</code> with the <code>X-API-Key</code> header.</div>
+  </div>
+
+  <div class="card kb">
+    <h2>What this proves</h2>
+    <ul>
+      <li>MCP spec compliance: <code>initialize</code> · <code>tools/list</code> · <code>tools/call</code> with JSON-Schema tools <span class="sc">2024-11-05</span></li>
+      <li>Auth: bad key → JSON-RPC <code>-32001</code>, HTTP 401</li>
+      <li>Scopes: read-only key on <code>trigger_refund</code> → <code>-32003</code></li>
+      <li>Rate limit: token bucket → <code>-32029</code>, HTTP 429 + retry-after</li>
+      <li>Telemetry: every call traced with latency + result bytes</li>
+    </ul>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>2 · Request / Response — raw JSON-RPC</h2>
+    <div class="duo">
+      <div><h3>→ request</h3><pre id="reqPane">{ }</pre></div>
+      <div><h3>← response</h3><pre id="resPane">{ }</pre></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Live traces</h2>
+    <div class="kv" id="stats"></div>
+    <table>
+      <thead><tr><th>trace</th><th>key</th><th>method · tool</th><th>status</th><th>latency</th><th>bytes</th></tr></thead>
+      <tbody id="traceBody"><tr><td colspan="6" style="color:var(--dim)">No calls yet — send one from the playground.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const SAMPLES = {
+  'initialize': null,
+  'tools/list': null,
+  'get_customer_record': { email: 'ava@nimbusretail.com' },
+  'query_inventory': { low_stock: true },
+  'trigger_refund': { order_id: 'ORD-9002', amount: 50, reason: 'damaged item' },
+  'search_knowledge_base': { query: 'refund policy', top_k: 2 },
+};
+let rpcId = 0;
+
+function buildRpc() {
+  const m = $('method').value;
+  rpcId++;
+  if (m === 'initialize' || m === 'tools/list') return { jsonrpc: '2.0', id: rpcId, method: m };
+  let args = {};
+  try { args = JSON.parse($('args').value || '{}'); } catch (_) {}
+  return { jsonrpc: '2.0', id: rpcId, method: 'tools/call', params: { name: m, arguments: args } };
+}
+
+function setArgs() {
+  const s = SAMPLES[$('method').value];
+  $('args').value = s ? JSON.stringify(s, null, 2) : '';
+  $('args').disabled = !s;
+}
+$('method').onchange = setArgs; setArgs();
+
+function step(id, cls) { const el = $(id); el.className = 'step' + (cls ? ' ' + cls : ''); }
+function resetSteps() { ['st-auth','st-rate','st-dispatch','st-trace'].forEach(s => step(s, '')); }
+
+async function sendOne(silentPane) {
+  const rpc = buildRpc();
+  if (!silentPane) { resetSteps(); $('reqPane').textContent = JSON.stringify(rpc, null, 2); }
+  const t0 = performance.now();
+  const res = await fetch('/api/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-api-key': $('key').value },
+    body: JSON.stringify(rpc),
+  });
+  const body = await res.json();
+  const ms = (performance.now() - t0).toFixed(1);
+  if (!silentPane) {
+    $('resPane').textContent = `HTTP ${res.status} · ${ms}ms\n` + JSON.stringify(body, null, 2);
+    const code = body.error && body.error.code;
+    if (code === -32001) { step('st-auth','err'); }
+    else {
+      step('st-auth','on');
+      if (code === -32029) { step('st-rate','err'); }
+      else {
+        step('st-rate','on');
+        if (code) { step('st-dispatch','err'); step('st-trace','on'); }
+        else { step('st-dispatch','on'); step('st-trace','on'); }
+      }
+    }
+  }
+  return { status: res.status, body };
+}
+
+$('send').onclick = async () => { await sendOne(false); refresh(); };
+
+$('burst').onclick = async () => {
+  resetSteps();
+  const results = [];
+  for (let i = 0; i < 25; i++) {
+    const r = await sendOne(true);
+    results.push(r.status);
+  }
+  const limited = results.filter(s => s === 429).length;
+  $('reqPane').textContent = `burst: 25× ${$('method').value} with key ${$('key').value}`;
+  $('resPane').textContent = `HTTP statuses: ${results.join(', ')}\n\n→ ${25 - limited} accepted · ${limited} rate-limited (429 / JSON-RPC -32029)\nToken bucket: capacity 20, refill 10/min — the last ${limited} calls hit the empty bucket.`;
+  step('st-auth','on'); step('st-rate', limited ? 'err' : 'on');
+  refresh();
+};
+
+async function refresh() {
+  try {
+    const [tr, ks] = await Promise.all([
+      fetch('/api/traces?limit=15').then(r => r.json()),
+      fetch('/api/keys').then(r => r.json()),
+    ]);
+    const ok = tr.traces.filter(t => t.ok).length;
+    const avg = tr.traces.length ? (tr.traces.reduce((s,t) => s + t.latency_ms, 0) / tr.traces.length).toFixed(2) : '—';
+    $('stats').innerHTML =
+      box(tr.count, 'total calls') + box(ok, 'ok (recent)') +
+      box(tr.traces.length - ok, 'errors (recent)') + box(avg + 'ms', 'avg latency');
+    $('traceBody').innerHTML = tr.traces.map(t => `<tr>
+      <td class="mono">${t.trace_id}</td>
+      <td class="mono">${t.key}</td>
+      <td class="mono">${t.method}${t.tool ? ' · <b>' + t.tool + '</b>' : ''}</td>
+      <td>${t.ok ? '<span class="pill ok">ok</span>' : `<span class="pill bad">${esc(t.error)}</span>`}</td>
+      <td class="mono">${t.latency_ms}ms</td>
+      <td class="mono">${t.result_bytes}</td>
+    </tr>`).join('') || '<tr><td colspan="6" style="color:var(--dim)">No calls yet.</td></tr>';
+    const k = ks.keys.find(x => x.key === $('key').value);
+    if (k) {
+      $('bucketNote').textContent = `Bucket for ${k.key}: ${k.bucket.tokens}/${k.bucket.capacity} tokens · refill ${ks.rate_limit.refill_per_min}/min`;
+      $('bucketFill').style.width = (100 * k.bucket.tokens / k.bucket.capacity) + '%';
+      $('bucketFill').style.background = k.bucket.tokens < 5 ? 'var(--bad)' : k.bucket.tokens < 10 ? 'var(--warn)' : 'var(--ok)';
+    }
+  } catch (_) {}
+}
+function box(n, l) { return `<div class="box"><div class="n">${n}</div><div class="l">${l}</div></div>`; }
+function esc(s) { return String(s || '').replace(/</g, '&lt;'); }
+
+$('cfg').textContent = JSON.stringify({
+  mcpServers: {
+    'company-tools': {
+      url: location.origin + '/api/mcp',
+      transport: 'http',
+      headers: { 'X-API-Key': 'mcp_demo_admin' },
+    },
+  },
+}, null, 2);
+
+$('key').onchange = refresh;
+setInterval(refresh, 5000);
+refresh();
+</script>
+</body>
+</html>

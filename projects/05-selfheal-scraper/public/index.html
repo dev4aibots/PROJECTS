@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SelfHeal Scraper — LLM-Adaptive Selector Repair</title>
+<style>
+:root{--bg:#0b1020;--panel:#131a2e;--panel2:#1a2340;--line:#26304f;--text:#e6ebff;--dim:#8b96b8;--acc:#6d8bff;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5d6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}
+header{margin-bottom:20px}
+h1{font-size:26px}
+h1 .tag{font-size:12px;background:var(--acc);color:#fff;border-radius:20px;padding:2px 10px;vertical-align:middle;margin-left:8px}
+.sub{color:var(--dim);margin-top:4px}
+.links{margin-top:8px;font-size:13px}
+.links a{color:var(--acc);text-decoration:none;margin-right:14px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--acc)}
+button{background:var(--acc);border:0;border-radius:8px;color:#fff;padding:9px 16px;font:600 14px inherit;cursor:pointer;margin-top:10px}
+button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--panel2);border:1px solid var(--line)}
+button.boom{background:var(--bad)}
+.samples button{width:100%;text-align:left;margin-top:8px}
+.samples .hint{font-size:12px;color:var(--dim)}
+.stepper{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.step{font-size:12px;border:1px solid var(--line);border-radius:16px;padding:3px 10px;color:var(--dim);background:var(--panel2)}
+.step.on{border-color:var(--acc);color:var(--text);background:rgba(109,139,255,.15)}
+.step.done{border-color:var(--ok);color:var(--ok)}
+.step.heal{border-color:var(--warn);color:var(--warn)}
+.badge{display:inline-block;font-size:11px;border-radius:12px;padding:2px 9px;font-weight:700}
+.b-css{background:rgba(61,220,132,.15);color:var(--ok)}
+.b-heal{background:rgba(255,176,32,.15);color:var(--warn)}
+.b-fail{background:rgba(255,93,108,.15);color:var(--bad)}
+pre{background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.5 var(--mono);color:#c8d4ff;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:6px 8px;vertical-align:top}
+th{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+td code{font-family:var(--mono);font-size:11.5px;color:#9fd0ff;word-break:break-all}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.pc{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel2)}
+.pc .n{font-weight:600;font-size:13px}
+.pc .p{font-size:22px;font-weight:700;margin:4px 0}
+.pc .m{font-size:11px;color:var(--dim)}
+.pc canvas{width:100%;height:36px;margin-top:6px}
+.alert{border:1px solid var(--bad);border-radius:8px;padding:8px 10px;background:rgba(255,93,108,.08);font-size:13px;margin-top:8px}
+.toggle{font-size:12px;color:var(--acc);cursor:pointer;user-select:none;margin-top:10px;display:inline-block}
+.empty{color:var(--dim);font-size:13px;padding:14px;text-align:center}
+.heal-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--panel2);font-size:13px}
+.heal-item code{font-family:var(--mono);font-size:11.5px;color:#9fd0ff;word-break:break-all}
+.heal-item .m{font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🩹 SelfHeal Scraper <span class="tag" id="mode">demo</span></h1>
+  <div class="sub">Price scrapers whose CSS selectors <b>repair themselves</b> when a site redesign breaks them — LLM (or deterministic heuristic) extracts the price from the changed DOM, derives a new selector, validates it, and version-bumps the registry.</div>
+  <div class="links"><a href="/docs" target="_blank">API docs (Swagger)</a><a href="/api/health" target="_blank">/api/health</a><a href="/api/mock/store?layout=v1" target="_blank">mock store v1</a><a href="/api/mock/store?layout=v2" target="_blank">mock store v2 (redesigned)</a></div>
+</header>
+
+<div class="grid">
+<div>
+  <div class="card samples">
+    <h2>1 · Run the pipeline</h2>
+    <div class="hint">Cron normally does this every 6 h. Trigger it manually:</div>
+    <button onclick="scrape('v1')">▶️ Run scrape — layout v1 (selectors work → CSS fast path)</button>
+    <button class="boom" onclick="scrape('v2')">💥 Simulate site redesign — layout v2 (selectors break → self-heal)</button>
+    <button class="ghost" onclick="scrape('v2')">🔁 Run again on v2 (healed selectors now fast-path)</button>
+    <button class="ghost" onclick="resetAll()">♻️ Reset registry &amp; history</button>
+  </div>
+  <div class="card">
+    <h2>Monitored products</h2>
+    <div id="products" class="pcards"><div class="empty">loading…</div></div>
+    <div id="alerts"></div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>2 · Pipeline</h2>
+    <div class="stepper" id="stepper">
+      <span class="step">Cron / trigger</span><span class="step">CSS fast path</span><span class="step">MISS detected</span><span class="step">Self-healing</span><span class="step">Selector validated</span><span class="step">Price logged</span>
+    </div>
+    <div id="out" class="empty">Run layout v1, then simulate the redesign to watch the heal.</div>
+  </div>
+  <div class="card">
+    <h2>3 · Selector registry &amp; heal audit</h2>
+    <div id="registry" class="empty">loading…</div>
+    <div id="heals"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+let lastJson = null;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api = async (p, o) => (await fetch(p, o)).json();
+
+function setSteps(res) {
+  const st = $('stepper').children;
+  const healed = res.some(r => r.healed);
+  const states = healed ? ['done','done','heal','heal','done','done'] : ['done','done','','','','done'];
+  for (let i = 0; i < st.length; i++) st[i].className = 'step ' + (states[i]||'');
+}
+
+async function scrape(layout) {
+  $('out').innerHTML = '<div class="empty">scraping…</div>';
+  const d = await api('/api/scrape', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({force_layout:layout})});
+  lastJson = d;
+  setSteps(d.results);
+  let h = `<div style="font-size:12px;color:var(--dim);margin-bottom:6px">layout: <b>${d.layout}</b></div><table><thead><tr><th>Product</th><th>Price</th><th>Method</th><th>Selector (v)</th><th>ms</th></tr></thead><tbody>`;
+  for (const r of d.results) {
+    const cls = r.status !== 'OK' ? 'b-fail' : (r.healed ? 'b-heal' : 'b-css');
+    const lbl = r.status !== 'OK' ? 'FAILED' : (r.healed ? '🩹 ' + r.method : 'css fast path');
+    h += `<tr><td>${esc(r.name)}</td><td><b>${r.price===null?'—':'$'+r.price.toFixed(2)}</b></td><td><span class="badge ${cls}">${esc(lbl)}</span></td><td><code>${esc(r.selector)}</code> <span style="color:var(--dim)">v${r.selector_version??''}</span></td><td>${r.latency_ms}</td></tr>`;
+  }
+  h += '</tbody></table><span class="toggle" onclick="toggleJson()">{ } raw JSON</span><pre id="rawjson" style="display:none"></pre>';
+  $('out').innerHTML = h; $('out').className = '';
+  refresh();
+}
+
+function toggleJson(){const p=$('rawjson');p.style.display=p.style.display==='none'?'block':'none';p.textContent=JSON.stringify(lastJson,null,2);}
+
+async function resetAll(){await api('/api/reset',{method:'POST'});$('out').innerHTML='<div class="empty">registry & history reset.</div>';refresh();}
+
+function spark(cv, hist) {
+  const ctx = cv.getContext('2d'); const W = cv.width = cv.offsetWidth * 2, H = cv.height = 72;
+  const vals = hist.map(h => h.price); if (!vals.length) return;
+  const mn = Math.min(...vals), mx = Math.max(...vals), rng = (mx - mn) || 1;
+  ctx.strokeStyle = '#6d8bff'; ctx.lineWidth = 2; ctx.beginPath();
+  vals.forEach((v, i) => {
+    const x = vals.length === 1 ? W/2 : 4 + i * (W - 8) / (vals.length - 1);
+    const y = H - 8 - (v - mn) / rng * (H - 16);
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  });
+  ctx.stroke();
+}
+
+async function refresh() {
+  const [prods, sels] = await Promise.all([api('/api/products'), api('/api/selectors')]);
+  $('products').innerHTML = prods.products.map(p => `
+    <div class="pc"><div class="n">${esc(p.name)}</div>
+      <div class="p">${p.current_price===null?'—':'$'+p.current_price.toFixed(2)}</div>
+      <div class="m">${p.history.length} price points</div>
+      <canvas data-pid="${p.id}"></canvas></div>`).join('');
+  for (const p of prods.products) {
+    const cv = document.querySelector(`canvas[data-pid="${p.id}"]`);
+    if (cv && p.history.length) spark(cv, p.history);
+  }
+  $('alerts').innerHTML = prods.alerts.slice(0, 3).map(a =>
+    `<div class="alert">📉 <b>${esc(a.name)}</b> dropped $${a.from.toFixed(2)} → $${a.to.toFixed(2)} (−${a.drop_pct}%)</div>`).join('');
+  $('registry').className = '';
+  $('registry').innerHTML = '<table><thead><tr><th>Product</th><th>Selector</th><th>v</th><th>Method</th><th>Healed at</th></tr></thead><tbody>' +
+    sels.registry.map(r => `<tr><td>${esc(r.product_id)}</td><td><code>${esc(r.selector)}</code></td><td>${r.version}</td><td>${esc(r.method)}</td><td>${r.healed_at||'—'}</td></tr>`).join('') +
+    '</tbody></table>';
+  $('heals').innerHTML = sels.heals.length ? '<h2 style="font-size:13px;color:var(--warn);margin:14px 0 6px">Heal audit</h2>' +
+    sels.heals.map(h => `<div class="heal-item">🩹 <b>${esc(h.product_id)}</b> <span class="m">${h.at} · ${esc(h.healer)} · layout ${h.layout} · ${h.validated?'validated ✓':'kept old selector'}</span><br>
+      <code>${esc(h.old_selector)}</code> → <code>${esc(h.new_selector)}</code> · price $${h.price.toFixed(2)}</div>`).join('') : '';
+}
+
+async function init() {
+  try { const h = await api('/api/health'); $('mode').textContent = h.mode; } catch(e) {}
+  refresh();
+}
+init();
+</script>
+</body>
+</html>
