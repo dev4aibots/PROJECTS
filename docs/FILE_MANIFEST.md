@@ -65,14 +65,14 @@
 
 | File | Status |
 |---|---|
-| `docs/projects/zerotrust-sql/BRIEF.md` | ⬜ |
-| `docs/projects/zerotrust-sql/RESUME.md` | ⬜ |
-| `api/index.py` (FastAPI: query, schema, audit; guard + nl2sql + warehouse inline) | ⬜ |
-| `requirements.txt` | ⬜ |
-| `vercel.json` | ⬜ |
-| `public/index.html` | ⬜ |
-| `tests/test_guard.py` | ⬜ |
-| `README.md` | ⬜ |
+| `docs/projects/zerotrust-sql/BRIEF.md` | ✅ |
+| `docs/projects/zerotrust-sql/RESUME.md` | ✅ |
+| `api/index.py` (FastAPI: query, schema, audit; guard + nl2sql + warehouse inline) | ✅ |
+| `requirements.txt` | ✅ |
+| `vercel.json` | ✅ |
+| `public/index.html` | ✅ |
+| `tests/test_guard.py` | ✅ |
+| `README.md` | ✅ |
 
 ## P5 SelfHeal Scraper — `projects/05-selfheal-scraper/`
 
