@@ -2,8 +2,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 node_modules/
-.next/
-*.tsbuildinfo
+.vercel/
 .env
-.env.*
-!.env.example
+.env.local
+*.log
+.DS_Store
+dist/
+.next/

@@ -1,7 +1,7 @@
-# RESUME — P4 ZeroTrust-SQL (LIVE state doc — update after every checkpoint)
+# RESUME — P1 FinAudit IDP (LIVE state doc — update after every checkpoint)
 
-**Spec:** see BRIEF.md (frozen). **Dir:** `projects/04-zerotrust-sql`
-**Verify command:** `cd projects/04-zerotrust-sql && pip install -r requirements.txt -q && python -m pytest tests/ -q`
+**Spec:** see BRIEF.md (frozen). **Dir:** `projects/01-finaudit-idp`
+**Verify command:** `cd projects/01-finaudit-idp && pip install -r requirements.txt -q && python -m pytest tests/ -q`
 
 ## Checkpoints
 | # | Checkpoint | Status |

@@ -1,7 +1,7 @@
-# RESUME — P4 ZeroTrust-SQL (LIVE state doc — update after every checkpoint)
+# RESUME — P3 DuraSupport (LIVE state doc — update after every checkpoint)
 
-**Spec:** see BRIEF.md (frozen). **Dir:** `projects/04-zerotrust-sql`
-**Verify command:** `cd projects/04-zerotrust-sql && pip install -r requirements.txt -q && python -m pytest tests/ -q`
+**Spec:** see BRIEF.md (frozen). **Dir:** `projects/03-durable-support`
+**Verify command:** `cd projects/03-durable-support && node tests/smoke.test.js`
 
 ## Checkpoints
 | # | Checkpoint | Status |

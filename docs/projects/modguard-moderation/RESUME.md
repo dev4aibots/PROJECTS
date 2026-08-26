@@ -1,7 +1,7 @@
-# RESUME — P4 ZeroTrust-SQL (LIVE state doc — update after every checkpoint)
+# RESUME — P6 ModGuard (LIVE state doc — update after every checkpoint)
 
-**Spec:** see BRIEF.md (frozen). **Dir:** `projects/04-zerotrust-sql`
-**Verify command:** `cd projects/04-zerotrust-sql && pip install -r requirements.txt -q && python -m pytest tests/ -q`
+**Spec:** see BRIEF.md (frozen). **Dir:** `projects/06-modguard-moderation`
+**Verify command:** `cd projects/06-modguard-moderation && node tests/smoke.test.js`
 
 ## Checkpoints
 | # | Checkpoint | Status |
