@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinAudit IDP — Financial Audit & Document Processing</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{background:#0b1020;color:#e2e8f0;font-family:ui-sans-serif,system-ui}
+  .card{background:#111a2e;border:1px solid #1e2a45;border-radius:14px}
+  .step-pending{opacity:.35}
+  .fade-in{animation:f .4s ease}
+  @keyframes f{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+  pre{white-space:pre-wrap;word-break:break-all}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-6xl mx-auto p-6">
+  <!-- Header -->
+  <header class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">🧾 FinAudit IDP</h1>
+      <p class="text-sm text-slate-400">Intelligent Document Processing · Σ-verification · human-in-the-loop routing</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="/docs" target="_blank" class="px-3 py-2 text-xs rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30">📜 Live OpenAPI / Swagger Docs</a>
+      <button onclick="loadStats()" class="px-3 py-2 text-xs rounded-lg bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30">📈 Telemetry / Stats</button>
+    </div>
+  </header>
+
+  <!-- Mode banner -->
+  <div id="modeBanner" class="card p-3 mb-6 text-xs text-slate-300"></div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- LEFT: input trigger -->
+    <div class="card p-5">
+      <h2 class="font-semibold text-white mb-3">1 · Submit an invoice</h2>
+      <div id="dropzone" class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center text-slate-400 text-sm cursor-pointer hover:border-sky-500 hover:text-sky-300 transition"
+           ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+        Drag & drop a PDF / image invoice here<br><span class="text-xs">(sent to Gemini Vision when GEMINI_API_KEY is set)</span>
+      </div>
+      <input type="file" id="fileInput" class="hidden" onchange="handleFile(this.files[0])">
+      <div class="mt-4 text-xs text-slate-400 mb-2">…or click to try sample data:</div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="runSample('clean')" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium">✅ Clean invoice → auto-approve</button>
+        <button onclick="runSample('mismatch')" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium">⚠️ Mismatched invoice → review queue</button>
+      </div>
+
+      <!-- Execution stepper -->
+      <div class="mt-6">
+        <h3 class="text-xs uppercase tracking-wide text-slate-500 mb-2">Live execution</h3>
+        <div id="stepper" class="space-y-1.5 text-sm"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: output card -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-white">2 · Result</h2>
+        <button id="jsonToggle" onclick="toggleJson()" class="hidden px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">{ } View Raw JSON</button>
+      </div>
+      <div id="result" class="text-sm text-slate-400">Run a sample to see the extraction, arithmetic verification and routing decision.</div>
+      <pre id="rawJson" class="hidden mt-3 p-3 bg-black/40 rounded-lg text-xs text-lime-300 max-h-96 overflow-auto"></pre>
+    </div>
+  </div>
+
+  <!-- Review queue -->
+  <div class="card p-5 mt-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-semibold text-white">3 · Human review queue</h2>
+      <button onclick="loadQueue()" class="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">↻ Refresh</button>
+    </div>
+    <div id="queue" class="text-sm text-slate-400">Empty — submit the mismatched sample to populate it.</div>
+  </div>
+
+  <div id="stats" class="card p-5 mt-6 hidden"></div>
+
+  <footer class="text-center text-xs text-slate-600 mt-8">
+    FastAPI · Pydantic v2 · exact Decimal arithmetic · Gemini 1.5 Vision · Vercel Serverless · $0 infra
+  </footer>
+</div>
+
+<script>
+const API = '';
+const STEPS = ['Webhook received','Extracting (Vision / demo extractor)','Validating Pydantic schema','Σ Arithmetic verification','Routing decision'];
+let lastDoc = null;
+
+async function init(){
+  try{
+    const h = await (await fetch(API+'/api/health')).json();
+    document.getElementById('modeBanner').innerHTML =
+      `Mode: <b class="${h.mode==='demo'?'text-amber-300':'text-emerald-300'}">${h.mode.toUpperCase()}</b>
+       · Gemini Vision: ${badge(h.integrations.gemini_vision)} · Slack alerts: ${badge(h.integrations.slack_alerts)} · Supabase: ${badge(h.integrations.supabase)}
+       <span class="text-slate-500">— demo mode is fully functional with zero API keys.</span>`;
+  }catch(e){
+    document.getElementById('modeBanner').innerHTML='<span class="text-rose-400">API unreachable — start the backend (uvicorn api.index:app) or deploy to Vercel.</span>';
+  }
+  loadQueue();
+}
+const badge = on => on?'<span class="text-emerald-400">on</span>':'<span class="text-slate-500">off</span>';
+
+function renderStepper(done){
+  document.getElementById('stepper').innerHTML = STEPS.map((s,i)=>
+    `<div class="flex items-center gap-2 ${i<done?'':'step-pending'} fade-in">
+       <span>${i<done?'✅':'⬜'}</span><span>${s}</span></div>`).join('');
+}
+
+async function runSample(id){ await run({sample_id:id}); }
+function handleDrop(e){ e.preventDefault(); handleFile(e.dataTransfer.files[0]); }
+function handleFile(f){
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => run({file_base64: r.result.split(',')[1], filename: f.name});
+  r.readAsDataURL(f);
+}
+
+async function run(payload){
+  renderStepper(0);
+  for(let i=1;i<=3;i++){ await new Promise(r=>setTimeout(r,220)); renderStepper(i); }
+  const res = await fetch(API+'/api/documents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const doc = await res.json();
+  renderStepper(5);
+  lastDoc = doc;
+  renderResult(doc);
+  loadQueue();
+}
+
+function renderResult(d){
+  if(!d.invoice){ document.getElementById('result').innerHTML=`<span class="text-rose-400">${JSON.stringify(d)}</span>`; return; }
+  const v = d.verification;
+  const inv = d.invoice;
+  const grand = v.checks.find(c=>c.check==='grand_total');
+  document.getElementById('jsonToggle').classList.remove('hidden');
+  document.getElementById('rawJson').textContent = JSON.stringify(d,null,2);
+  document.getElementById('result').innerHTML = `
+    <div class="fade-in">
+      <div class="flex flex-wrap gap-2 mb-3">
+        ${d.status==='AUTO_APPROVED'
+          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">AUTO-APPROVED</span>'
+          :'<span class="px-2 py-1 rounded bg-amber-600/30 text-amber-300 text-xs font-bold">NEEDS HUMAN REVIEW</span>'}
+        ${v.verified
+          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">Σ VERIFICATION: PASS</span>'
+          :'<span class="px-2 py-1 rounded bg-rose-600/30 text-rose-300 text-xs font-bold">Σ VERIFICATION: FAIL</span>'}
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+        <div><span class="text-slate-500">Vendor</span><br><b class="text-white">${inv.vendor}</b></div>
+        <div><span class="text-slate-500">Invoice #</span><br><b class="text-white">${inv.invoice_number||'—'}</b></div>
+        <div><span class="text-slate-500">Extractor</span><br>${d.extractor}</div>
+        <div><span class="text-slate-500">Confidence</span><br>
+          <div class="w-full bg-slate-700 h-2 rounded mt-1"><div class="h-2 rounded ${+d.confidence>=0.85?'bg-emerald-500':'bg-amber-500'}" style="width:${(+d.confidence*100)}%"></div></div>
+          ${(+d.confidence*100).toFixed(0)}% (threshold 85%)
+        </div>
+      </div>
+      <table class="w-full text-xs mb-3">
+        <thead><tr class="text-slate-500 text-left"><th class="py-1">Item</th><th>Qty</th><th>Unit</th><th>Amount</th><th>Math</th></tr></thead>
+        <tbody>${inv.line_items.map((li,i)=>{
+          const c=v.checks[i];
+          return `<tr class="border-t border-slate-700/60"><td class="py-1.5">${li.description}</td><td>${li.quantity}</td><td>${li.unit_price}</td><td>${li.amount}</td>
+            <td>${c.pass?'✅':`<span class="text-rose-400">❌ expected ${c.expected}</span>`}</td></tr>`;}).join('')}
+        </tbody>
+      </table>
+      <div class="text-xs p-2 rounded-lg ${grand.pass?'bg-emerald-900/30 text-emerald-300':'bg-rose-900/30 text-rose-300'}">
+        Grand total: Σ items ${grand.items_sum} + tax ${grand.tax} = <b>${grand.expected}</b> vs stated <b>${grand.stated}</b>
+        ${grand.pass?'✓ exact match':`✗ discrepancy ${grand.discrepancy} — flagged`}
+      </div>
+      <div class="text-xs text-slate-500 mt-2">Routing reasons: ${d.routing.reasons.join(', ')}</div>
+    </div>`;
+}
+
+function toggleJson(){ document.getElementById('rawJson').classList.toggle('hidden'); }
+
+async function loadQueue(){
+  const data = await (await fetch(API+'/api/documents?status=NEEDS_REVIEW')).json();
+  const el = document.getElementById('queue');
+  if(!data.count){ el.innerHTML='Empty — submit the mismatched sample to populate it.'; return; }
+  el.innerHTML = data.documents.map(d=>`
+    <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-700/60 py-2 fade-in">
+      <div class="text-xs"><b class="text-white">${d.invoice.invoice_number}</b> · ${d.invoice.vendor}
+        <span class="text-rose-400 ml-1">${d.routing.reasons.join(', ')}</span></div>
+      <div class="flex gap-2">
+        <button onclick="review('${d.id}','approve')" class="px-3 py-1 text-xs rounded bg-emerald-600 hover:bg-emerald-500 text-white">Approve</button>
+        <button onclick="review('${d.id}','reject')" class="px-3 py-1 text-xs rounded bg-rose-600 hover:bg-rose-500 text-white">Reject</button>
+      </div>
+    </div>`).join('');
+}
+async function review(id, action){
+  await fetch(`${API}/api/documents/${id}/review`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action, note:'reviewed from dashboard'})});
+  loadQueue(); loadStats(true);
+}
+async function loadStats(silent){
+  const s = await (await fetch(API+'/api/stats')).json();
+  const el = document.getElementById('stats');
+  el.classList.remove('hidden');
+  el.innerHTML = `<h2 class="font-semibold text-white mb-3">📈 Pipeline telemetry</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+      ${metric('Documents processed', s.total_documents)}
+      ${metric('Auto-approval rate', s.auto_approval_rate!=null?(s.auto_approval_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Σ pass rate', s.arithmetic_pass_rate!=null?(s.arithmetic_pass_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Review queue depth', s.review_queue_depth)}
+    </div>`;
+  if(!silent) el.scrollIntoView({behavior:'smooth'});
+}
+const metric=(l,v)=>`<div class="p-3 rounded-lg bg-black/30"><div class="text-2xl font-bold text-white">${v}</div><div class="text-xs text-slate-500">${l}</div></div>`;
+renderStepper(0); init();
+</script>
+</body>
+</html>

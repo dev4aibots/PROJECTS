@@ -16,21 +16,21 @@
 | `docs/AGENT_PROTOCOL.md` | ✅ |
 | `docs/CHECKPOINTS.md` | ✅ (living doc — update, don't rewrite) |
 | `docs/FILE_MANIFEST.md` | ✅ (living doc) |
-| `docs/DEPLOYMENT.md` | ⬜ |
+| `docs/DEPLOYMENT.md` | ✅ |
 
 ## P1 FinAudit IDP — `projects/01-finaudit-idp/`
 
 | File | Status |
 |---|---|
-| `docs/projects/finaudit-idp/BRIEF.md` | ⬜ |
-| `docs/projects/finaudit-idp/RESUME.md` | ⬜ |
-| `api/index.py` (FastAPI app: ingest, extract, verify, review queue, stats) | ⬜ |
-| `requirements.txt` | ⬜ |
-| `vercel.json` | ⬜ |
-| `public/index.html` (dashboard) | ⬜ |
-| `samples/invoice_clean.json` + `samples/invoice_mismatch.json` | ⬜ |
-| `tests/test_api.py` | ⬜ |
-| `README.md` | ⬜ |
+| `docs/projects/finaudit-idp/BRIEF.md` | ✅ |
+| `docs/projects/finaudit-idp/RESUME.md` | ✅ |
+| `api/index.py` (FastAPI app: ingest, extract, verify, review queue, stats) | ✅ |
+| `requirements.txt` | ✅ |
+| `vercel.json` | ✅ |
+| `public/index.html` (dashboard) | ✅ |
+| `samples/invoice_clean.json` + `samples/invoice_mismatch.json` | ✅ |
+| `tests/test_api.py` | ✅ |
+| `README.md` | ✅ |
 
 ## P2 LeadFlow — `projects/02-leadflow-enrichment/`
 
