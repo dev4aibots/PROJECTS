@@ -1,5 +1,5 @@
 """
-FinAudit IDP — Intelligent Document Processing & Financial Audit API
+FinAudit IDP — Financial Document Processing & Audit Engine (Vercel Build v1.0.2)
 =====================================================================
 Enterprise-grade invoice processing with:
   * Structured extraction (Gemini 1.5 Flash Vision when GEMINI_API_KEY set,
