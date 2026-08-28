@@ -344,6 +344,8 @@ class ScrapeIn(BaseModel):
     force_layout: str = "v1"
 
 
+@app.post("/api/index.py/api/scrape")
+@app.post("/api/index.py/scrape")
 @app.post("/api/scrape")
 @app.post("/scrape")
 def api_scrape(body: ScrapeIn):

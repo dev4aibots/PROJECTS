@@ -278,6 +278,8 @@ def notify_slack(doc: dict) -> bool:
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
+@app.post("/api/index.py/api/documents", status_code=201)
+@app.post("/api/index.py/documents", status_code=201)
 @app.post("/api/documents", status_code=201)
 @app.post("/documents", status_code=201)
 def ingest_document(req: IngestRequest):

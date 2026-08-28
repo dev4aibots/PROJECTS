@@ -360,6 +360,8 @@ class SqlIn(BaseModel):
     sql: str
 
 
+@app.post("/api/index.py/api/query")
+@app.post("/api/index.py/query")
 @app.post("/api/query")
 @app.post("/query")
 def api_query(body: QueryIn):
