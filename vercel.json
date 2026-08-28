@@ -1,0 +1,27 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/projects/00-portfolio-hub/public/index.html" },
+    { "source": "/01-finaudit-idp", "destination": "/projects/01-finaudit-idp/public/index.html" },
+    { "source": "/01-finaudit-idp/(.*)", "destination": "/projects/01-finaudit-idp/public/index.html" },
+    { "source": "/02-leadflow-enrichment", "destination": "/projects/02-leadflow-enrichment/public/index.html" },
+    { "source": "/02-leadflow-enrichment/(.*)", "destination": "/projects/02-leadflow-enrichment/public/index.html" },
+    { "source": "/03-durable-support", "destination": "/projects/03-durable-support/public/index.html" },
+    { "source": "/03-durable-support/(.*)", "destination": "/projects/03-durable-support/public/index.html" },
+    { "source": "/04-zerotrust-sql", "destination": "/projects/04-zerotrust-sql/public/index.html" },
+    { "source": "/04-zerotrust-sql/(.*)", "destination": "/projects/04-zerotrust-sql/public/index.html" },
+    { "source": "/05-selfheal-scraper", "destination": "/projects/05-selfheal-scraper/public/index.html" },
+    { "source": "/05-selfheal-scraper/(.*)", "destination": "/projects/05-selfheal-scraper/public/index.html" },
+    { "source": "/06-modguard-moderation", "destination": "/projects/06-modguard-moderation/public/index.html" },
+    { "source": "/06-modguard-moderation/(.*)", "destination": "/projects/06-modguard-moderation/public/index.html" },
+    { "source": "/07-mcp-gateway", "destination": "/projects/07-mcp-gateway/public/index.html" },
+    { "source": "/07-mcp-gateway/(.*)", "destination": "/projects/07-mcp-gateway/public/index.html" }
+  ]
+}
