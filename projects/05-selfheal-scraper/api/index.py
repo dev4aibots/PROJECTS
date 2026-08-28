@@ -390,16 +390,6 @@ def api_health():
             "heals_recorded": len(STATE["heals"])}
 
 
-from fastapi import FastAPI, Query, Request
-
-@app.api_route("/{path:path}", methods=["GET", "POST"])
-def catch_all(request: Request, path: str = ""):
-    raw_path = str(request.url.path)
-    if "scrape" in raw_path or "scrape" in path or request.method == "POST":
-        return api_scrape(ScrapeIn(force_layout="v2"))
-    return {"service": "selfheal-scraper", "status": "ok", "mode": "live" if os.environ.get("GROQ_API_KEY") else "demo"}
-
-
 @app.get("/")
 def root():
     path = os.path.join(os.path.dirname(__file__), "..", "public", "index.html")
