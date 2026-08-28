@@ -279,6 +279,7 @@ def notify_slack(doc: dict) -> bool:
 # Routes
 # ---------------------------------------------------------------------------
 @app.post("/api/documents", status_code=201)
+@app.post("/documents", status_code=201)
 def ingest_document(req: IngestRequest):
     """Ingest an invoice → extract → verify math → route (auto-approve vs human review)."""
     steps = []

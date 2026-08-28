@@ -361,12 +361,14 @@ class SqlIn(BaseModel):
 
 
 @app.post("/api/query")
+@app.post("/query")
 def api_query(body: QueryIn):
     sql, chart, generator = nl2sql(body.question)
     return run_guarded(sql, source="nl", question=body.question, chart=chart, generator=generator)
 
 
 @app.post("/api/sql")
+@app.post("/sql")
 def api_sql(body: SqlIn):
     """Raw SQL through the identical guard — the injection demo endpoint."""
     return run_guarded(body.sql, source="raw", question=None,

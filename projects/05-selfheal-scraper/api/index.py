@@ -345,6 +345,7 @@ class ScrapeIn(BaseModel):
 
 
 @app.post("/api/scrape")
+@app.post("/scrape")
 def api_scrape(body: ScrapeIn):
     layout = "v2" if body.force_layout == "v2" else "v1"
     targets = [p for p in CATALOG if body.product_id in (None, p["id"])]
