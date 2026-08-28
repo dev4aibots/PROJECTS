@@ -1,106 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FinAudit IDP — Financial Audit & Document Processing</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Geist', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
 <style>
-  body{background:#0b1020;color:#e2e8f0;font-family:ui-sans-serif,system-ui}
-  .card{background:#111a2e;border:1px solid #1e2a45;border-radius:14px}
-  .step-pending{opacity:.35}
-  .fade-in{animation:f .4s ease}
-  @keyframes f{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
-  pre{white-space:pre-wrap;word-break:break-all}
+  body { background-color: #030508; color: #f1f5f9; font-family: 'Geist', sans-serif; }
+  .doppelrand {
+    background: rgba(12, 16, 26, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.5rem;
+    padding: 0.5rem;
+  }
+  .doppelrand-core {
+    background: #07090e;
+    border-radius: calc(1.5rem - 0.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+  .step-pending { opacity: 0.35; }
+  .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  pre { white-space: pre-wrap; word-break: break-all; }
 </style>
 </head>
-<body class="min-h-screen">
-<div class="max-w-6xl mx-auto p-6">
+<body class="min-h-screen p-4 sm:p-8">
+<div class="max-w-6xl mx-auto space-y-6">
+
   <!-- Header -->
-  <header class="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <header class="flex flex-wrap items-center justify-between gap-4 py-4 px-6 rounded-2xl bg-slate-950/70 border border-white/10 backdrop-blur-xl">
     <div>
-      <h1 class="text-2xl font-bold text-white">🧾 FinAudit IDP</h1>
-      <p class="text-sm text-slate-400">Intelligent Document Processing · Σ-verification · human-in-the-loop routing</p>
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🧾</span>
+        <h1 class="text-xl font-bold text-white tracking-tight">FinAudit IDP</h1>
+        <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold">Live Microservice</span>
+      </div>
+      <p class="text-xs text-slate-400 mt-1">Intelligent Document Processing &bull; Python <code class="text-emerald-300 font-mono">Decimal</code> Σ-Verification &bull; Human Review Queue Routing</p>
     </div>
-    <div class="flex gap-2">
-      <a href="/docs" target="_blank" class="px-3 py-2 text-xs rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30">📜 Live OpenAPI / Swagger Docs</a>
-      <button onclick="loadStats()" class="px-3 py-2 text-xs rounded-lg bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30">📈 Telemetry / Stats</button>
+    
+    <div class="flex items-center gap-3 font-mono text-xs">
+      <a href="/docs" target="_blank" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 transition">📜 OpenAPI / Swagger Docs</a>
+      <button onclick="loadStats()" class="px-3.5 py-2 rounded-xl bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30 transition">📈 Telemetry</button>
     </div>
   </header>
 
-  <!-- Mode banner -->
-  <div id="modeBanner" class="card p-3 mb-6 text-xs text-slate-300"></div>
+  <!-- Telemetry Banner -->
+  <div id="modeBanner" class="px-5 py-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300"></div>
 
   <div class="grid md:grid-cols-2 gap-6">
-    <!-- LEFT: input trigger -->
-    <div class="card p-5">
-      <h2 class="font-semibold text-white mb-3">1 · Submit an invoice</h2>
-      <div id="dropzone" class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center text-slate-400 text-sm cursor-pointer hover:border-sky-500 hover:text-sky-300 transition"
-           ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
-        Drag & drop a PDF / image invoice here<br><span class="text-xs">(sent to Gemini Vision when GEMINI_API_KEY is set)</span>
-      </div>
-      <input type="file" id="fileInput" class="hidden" onchange="handleFile(this.files[0])">
-      <div class="mt-4 text-xs text-slate-400 mb-2">…or click to try sample data:</div>
-      <div class="flex flex-wrap gap-2">
-        <button onclick="runSample('clean')" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium">✅ Clean invoice → auto-approve</button>
-        <button onclick="runSample('mismatch')" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium">⚠️ Mismatched invoice → review queue</button>
-      </div>
+    <!-- LEFT: Input Trigger -->
+    <div class="doppelrand">
+      <div class="doppelrand-core p-6 space-y-4">
+        <h2 class="font-bold text-white text-base">1 &bull; Submit Financial Invoice</h2>
+        
+        <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/60 rounded-2xl p-8 text-center text-slate-400 text-xs cursor-pointer transition bg-slate-950/40"
+             ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+          Drag & drop a PDF / image invoice here<br>
+          <span class="text-[11px] text-slate-500 mt-1 block">(Sent to Gemini Vision when GEMINI_API_KEY is present)</span>
+        </div>
+        <input type="file" id="fileInput" class="hidden" onchange="handleFile(this.files[0])">
+        
+        <div class="text-xs text-slate-400 font-mono pt-2">Run zero-key interactive samples:</div>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="runSample('clean')" class="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-lg shadow-emerald-600/20">
+            ✅ Clean Invoice → Auto-Approve
+          </button>
+          <button onclick="runSample('mismatch')" class="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition shadow-lg shadow-rose-600/20">
+            ⚠️ Mismatched Invoice → Review Queue
+          </button>
+        </div>
 
-      <!-- Execution stepper -->
-      <div class="mt-6">
-        <h3 class="text-xs uppercase tracking-wide text-slate-500 mb-2">Live execution</h3>
-        <div id="stepper" class="space-y-1.5 text-sm"></div>
+        <!-- Execution Stepper -->
+        <div class="pt-4 border-t border-slate-800/80">
+          <h3 class="text-[11px] uppercase tracking-wider font-mono text-slate-500 mb-3">Pipeline Execution Stepper</h3>
+          <div id="stepper" class="space-y-2 font-mono text-xs"></div>
+        </div>
       </div>
     </div>
 
-    <!-- RIGHT: output card -->
-    <div class="card p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-white">2 · Result</h2>
-        <button id="jsonToggle" onclick="toggleJson()" class="hidden px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">{ } View Raw JSON</button>
+    <!-- RIGHT: Result Inspector -->
+    <div class="doppelrand">
+      <div class="doppelrand-core p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-white text-base">2 &bull; Extraction & Verification Result</h2>
+          <button id="jsonToggle" onclick="toggleJson()" class="hidden px-3 py-1 text-xs font-mono rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300">{ } View Raw JSON</button>
+        </div>
+        
+        <div id="result" class="text-xs text-slate-400">Run a sample on the left to inspect invoice extraction, exact arithmetic verification, and automated routing.</div>
+        <pre id="rawJson" class="hidden mt-4 p-4 bg-black/80 border border-slate-800 rounded-xl text-[11px] font-mono text-emerald-300 max-h-96 overflow-auto"></pre>
       </div>
-      <div id="result" class="text-sm text-slate-400">Run a sample to see the extraction, arithmetic verification and routing decision.</div>
-      <pre id="rawJson" class="hidden mt-3 p-3 bg-black/40 rounded-lg text-xs text-lime-300 max-h-96 overflow-auto"></pre>
     </div>
   </div>
 
-  <!-- Review queue -->
-  <div class="card p-5 mt-6">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="font-semibold text-white">3 · Human review queue</h2>
-      <button onclick="loadQueue()" class="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">↻ Refresh</button>
+  <!-- Review Queue -->
+  <div class="doppelrand">
+    <div class="doppelrand-core p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-white text-base">3 &bull; Human In-The-Loop Review Queue</h2>
+        <button onclick="loadQueue()" class="px-3 py-1.5 text-xs font-mono rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300">↻ Refresh Queue</button>
+      </div>
+      <div id="queue" class="text-xs font-mono text-slate-400">Empty — submit the mismatched sample invoice to populate this review queue.</div>
     </div>
-    <div id="queue" class="text-sm text-slate-400">Empty — submit the mismatched sample to populate it.</div>
   </div>
 
-  <div id="stats" class="card p-5 mt-6 hidden"></div>
+  <div id="stats" class="doppelrand hidden"></div>
 
-  <footer class="text-center text-xs text-slate-600 mt-8">
-    FastAPI · Pydantic v2 · exact Decimal arithmetic · Gemini 1.5 Vision · Vercel Serverless · $0 infra
+  <footer class="text-center text-xs font-mono text-slate-500 py-6">
+    FastAPI &bull; Pydantic v2 &bull; Python <code class="text-slate-400 font-mono">Decimal</code> Math &bull; Gemini Vision &bull; Multi-LLM Failover
   </footer>
+
 </div>
 
 <script>
 const API = '';
-const STEPS = ['Webhook received','Extracting (Vision / demo extractor)','Validating Pydantic schema','Σ Arithmetic verification','Routing decision'];
+const STEPS = ['Webhook Received','Extracting via Vision / Failover LLM','Pydantic Schema Parsing','Exact Python Decimal Σ-Verification','Routing Decision & State Dispatch'];
 let lastDoc = null;
 
 async function init(){
   try{
     const h = await (await fetch(API+'/api/health')).json();
     document.getElementById('modeBanner').innerHTML =
-      `Mode: <b class="${h.mode==='demo'?'text-amber-300':'text-emerald-300'}">${h.mode.toUpperCase()}</b>
-       · Gemini Vision: ${badge(h.integrations.gemini_vision)} · Slack alerts: ${badge(h.integrations.slack_alerts)} · Supabase: ${badge(h.integrations.supabase)}
-       <span class="text-slate-500">— demo mode is fully functional with zero API keys.</span>`;
+      `Backend Status: <b class="${h.mode==='demo'?'text-amber-300':'text-emerald-300'}">${h.mode.toUpperCase()} MODE</b>
+       &bull; Gemini Vision: ${badge(h.integrations.gemini_vision)} &bull; Slack Alerts: ${badge(h.integrations.slack_alerts)} &bull; Supabase DB: ${badge(h.integrations.supabase)}
+       <span class="text-slate-500 font-normal ml-2">— Zero API key demo mode active with full functionality.</span>`;
   }catch(e){
-    document.getElementById('modeBanner').innerHTML='<span class="text-rose-400">API unreachable — start the backend (uvicorn api.index:app) or deploy to Vercel.</span>';
+    document.getElementById('modeBanner').innerHTML='<span class="text-rose-400">API Offline — Start Uvicorn or verify Vercel environment.</span>';
   }
   loadQueue();
 }
-const badge = on => on?'<span class="text-emerald-400">on</span>':'<span class="text-slate-500">off</span>';
+const badge = on => on?'<span class="text-emerald-400 font-bold">ACTIVE</span>':'<span class="text-slate-500">OFFLINE (DEMO FALLBACK)</span>';
 
 function renderStepper(done){
   document.getElementById('stepper').innerHTML = STEPS.map((s,i)=>
-    `<div class="flex items-center gap-2 ${i<done?'':'step-pending'} fade-in">
+    `<div class="flex items-center gap-2.5 ${i<done?'':'step-pending'} fade-in">
        <span>${i<done?'✅':'⬜'}</span><span>${s}</span></div>`).join('');
 }
 
@@ -115,7 +164,7 @@ function handleFile(f){
 
 async function run(payload){
   renderStepper(0);
-  for(let i=1;i<=3;i++){ await new Promise(r=>setTimeout(r,220)); renderStepper(i); }
+  for(let i=1;i<=3;i++){ await new Promise(r=>setTimeout(r,200)); renderStepper(i); }
   const res = await fetch(API+'/api/documents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   const doc = await res.json();
   renderStepper(5);
@@ -125,44 +174,47 @@ async function run(payload){
 }
 
 function renderResult(d){
-  if(!d.invoice){ document.getElementById('result').innerHTML=`<span class="text-rose-400">${JSON.stringify(d)}</span>`; return; }
+  if(!d.invoice){ document.getElementById('result').innerHTML=`<span class="text-rose-400 font-mono">${JSON.stringify(d)}</span>`; return; }
   const v = d.verification;
   const inv = d.invoice;
   const grand = v.checks.find(c=>c.check==='grand_total');
   document.getElementById('jsonToggle').classList.remove('hidden');
   document.getElementById('rawJson').textContent = JSON.stringify(d,null,2);
   document.getElementById('result').innerHTML = `
-    <div class="fade-in">
-      <div class="flex flex-wrap gap-2 mb-3">
+    <div class="fade-in space-y-4">
+      <div class="flex flex-wrap gap-2 font-mono">
         ${d.status==='AUTO_APPROVED'
-          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">AUTO-APPROVED</span>'
-          :'<span class="px-2 py-1 rounded bg-amber-600/30 text-amber-300 text-xs font-bold">NEEDS HUMAN REVIEW</span>'}
+          ?'<span class="px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">STATUS: AUTO_APPROVED</span>'
+          :'<span class="px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold">STATUS: NEEDS_HUMAN_REVIEW</span>'}
         ${v.verified
-          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">Σ VERIFICATION: PASS</span>'
-          :'<span class="px-2 py-1 rounded bg-rose-600/30 text-rose-300 text-xs font-bold">Σ VERIFICATION: FAIL</span>'}
+          ?'<span class="px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">Σ MATH: PASS</span>'
+          :'<span class="px-3 py-1 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold">Σ MATH: FAIL (DISCREPANCY DETECTED)</span>'}
       </div>
-      <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+
+      <div class="grid grid-cols-2 gap-3 text-xs font-mono bg-slate-950 p-4 rounded-xl border border-slate-800">
         <div><span class="text-slate-500">Vendor</span><br><b class="text-white">${inv.vendor}</b></div>
         <div><span class="text-slate-500">Invoice #</span><br><b class="text-white">${inv.invoice_number||'—'}</b></div>
-        <div><span class="text-slate-500">Extractor</span><br>${d.extractor}</div>
-        <div><span class="text-slate-500">Confidence</span><br>
-          <div class="w-full bg-slate-700 h-2 rounded mt-1"><div class="h-2 rounded ${+d.confidence>=0.85?'bg-emerald-500':'bg-amber-500'}" style="width:${(+d.confidence*100)}%"></div></div>
+        <div><span class="text-slate-500">Extractor Engine</span><br><span class="text-indigo-300">${d.extractor}</span></div>
+        <div><span class="text-slate-500">Extraction Confidence</span><br>
+          <div class="w-full bg-slate-800 h-1.5 rounded mt-1.5 overflow-hidden"><div class="h-full ${+d.confidence>=0.85?'bg-emerald-500':'bg-amber-500'}" style="width:${(+d.confidence*100)}%"></div></div>
           ${(+d.confidence*100).toFixed(0)}% (threshold 85%)
         </div>
       </div>
-      <table class="w-full text-xs mb-3">
-        <thead><tr class="text-slate-500 text-left"><th class="py-1">Item</th><th>Qty</th><th>Unit</th><th>Amount</th><th>Math</th></tr></thead>
+
+      <table class="w-full text-xs font-mono border-collapse">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-800"><th class="pb-2">Item</th><th class="pb-2">Qty</th><th class="pb-2">Price</th><th class="pb-2">Amount</th><th class="pb-2">Math Check</th></tr></thead>
         <tbody>${inv.line_items.map((li,i)=>{
           const c=v.checks[i];
-          return `<tr class="border-t border-slate-700/60"><td class="py-1.5">${li.description}</td><td>${li.quantity}</td><td>${li.unit_price}</td><td>${li.amount}</td>
-            <td>${c.pass?'✅':`<span class="text-rose-400">❌ expected ${c.expected}</span>`}</td></tr>`;}).join('')}
+          return `<tr class="border-b border-slate-800/50"><td class="py-2">${li.description}</td><td>${li.quantity}</td><td>${li.unit_price}</td><td>${li.amount}</td>
+            <td>${c.pass?'<span class="text-emerald-400 font-bold">✅ PASS</span>':`<span class="text-rose-400 font-bold">❌ FAIL (Expected ${c.expected})</span>`}</td></tr>`;}).join('')}
         </tbody>
       </table>
-      <div class="text-xs p-2 rounded-lg ${grand.pass?'bg-emerald-900/30 text-emerald-300':'bg-rose-900/30 text-rose-300'}">
-        Grand total: Σ items ${grand.items_sum} + tax ${grand.tax} = <b>${grand.expected}</b> vs stated <b>${grand.stated}</b>
-        ${grand.pass?'✓ exact match':`✗ discrepancy ${grand.discrepancy} — flagged`}
+
+      <div class="text-xs font-mono p-3.5 rounded-xl ${grand.pass?'bg-emerald-950/60 border border-emerald-800/60 text-emerald-300':'bg-rose-950/60 border border-rose-800/60 text-rose-300'}">
+        Grand Total Σ: Items ${grand.items_sum} + Tax ${grand.tax} = <b>${grand.expected}</b> vs Stated <b>${grand.stated}</b>
+        <div class="mt-1 font-bold">${grand.pass?'✓ Exact mathematical verification match':`✗ Discrepancy detected: ${grand.discrepancy} — Flagged for manual review`}</div>
       </div>
-      <div class="text-xs text-slate-500 mt-2">Routing reasons: ${d.routing.reasons.join(', ')}</div>
+      <div class="text-xs text-slate-500 font-mono">Routing Reasons: ${d.routing.reasons.join(', ')}</div>
     </div>`;
 }
 
@@ -171,14 +223,14 @@ function toggleJson(){ document.getElementById('rawJson').classList.toggle('hidd
 async function loadQueue(){
   const data = await (await fetch(API+'/api/documents?status=NEEDS_REVIEW')).json();
   const el = document.getElementById('queue');
-  if(!data.count){ el.innerHTML='Empty — submit the mismatched sample to populate it.'; return; }
+  if(!data.count){ el.innerHTML='Empty — submit the mismatched sample invoice to populate this review queue.'; return; }
   el.innerHTML = data.documents.map(d=>`
-    <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-700/60 py-2 fade-in">
-      <div class="text-xs"><b class="text-white">${d.invoice.invoice_number}</b> · ${d.invoice.vendor}
-        <span class="text-rose-400 ml-1">${d.routing.reasons.join(', ')}</span></div>
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 py-3 fade-in font-mono text-xs">
+      <div><b class="text-white">${d.invoice.invoice_number}</b> &bull; ${d.invoice.vendor}
+        <span class="text-rose-400 ml-2">(${d.routing.reasons.join(', ')})</span></div>
       <div class="flex gap-2">
-        <button onclick="review('${d.id}','approve')" class="px-3 py-1 text-xs rounded bg-emerald-600 hover:bg-emerald-500 text-white">Approve</button>
-        <button onclick="review('${d.id}','reject')" class="px-3 py-1 text-xs rounded bg-rose-600 hover:bg-rose-500 text-white">Reject</button>
+        <button onclick="review('${d.id}','approve')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">Approve Invoice</button>
+        <button onclick="review('${d.id}','reject')" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition">Reject Invoice</button>
       </div>
     </div>`).join('');
 }
@@ -190,16 +242,17 @@ async function loadStats(silent){
   const s = await (await fetch(API+'/api/stats')).json();
   const el = document.getElementById('stats');
   el.classList.remove('hidden');
-  el.innerHTML = `<h2 class="font-semibold text-white mb-3">📈 Pipeline telemetry</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-      ${metric('Documents processed', s.total_documents)}
-      ${metric('Auto-approval rate', s.auto_approval_rate!=null?(s.auto_approval_rate*100).toFixed(0)+'%':'—')}
-      ${metric('Σ pass rate', s.arithmetic_pass_rate!=null?(s.arithmetic_pass_rate*100).toFixed(0)+'%':'—')}
-      ${metric('Review queue depth', s.review_queue_depth)}
-    </div>`;
+  el.innerHTML = `<div class="doppelrand-core p-6 font-mono text-xs">
+    <h2 class="font-bold text-white text-base mb-4">📈 Pipeline Telemetry</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+      ${metric('Total Processed', s.total_documents)}
+      ${metric('Auto-Approval Rate', s.auto_approval_rate!=null?(s.auto_approval_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Σ Verification Pass Rate', s.arithmetic_pass_rate!=null?(s.arithmetic_pass_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Queue Depth', s.review_queue_depth)}
+    </div></div>`;
   if(!silent) el.scrollIntoView({behavior:'smooth'});
 }
-const metric=(l,v)=>`<div class="p-3 rounded-lg bg-black/30"><div class="text-2xl font-bold text-white">${v}</div><div class="text-xs text-slate-500">${l}</div></div>`;
+const metric=(l,v)=>`<div class="p-4 rounded-xl bg-slate-950 border border-slate-800"><div class="text-2xl font-bold text-white">${v}</div><div class="text-xs text-slate-500 mt-1">${l}</div></div>`;
 renderStepper(0); init();
 </script>
 </body>
