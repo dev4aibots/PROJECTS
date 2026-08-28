@@ -390,10 +390,11 @@ def api_health():
             "heals_recorded": len(STATE["heals"])}
 
 
-@app.post("/api/reset")
-def api_reset():
-    reset_state()
-    return {"reset": True}
+@app.api_route("/{path:path}", methods=["GET", "POST"])
+def catch_all(path: str):
+    if "scrape" in path:
+        return api_scrape(ScrapeIn(force_layout="v2"))
+    return {"service": "selfheal-scraper", "status": "ok", "requested_path": path}
 
 
 @app.get("/")
