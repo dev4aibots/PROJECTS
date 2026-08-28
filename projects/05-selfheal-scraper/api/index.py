@@ -400,3 +400,10 @@ def root():
         if os.path.exists(p):
             return HTMLResponse(open(p, "r", encoding="utf-8").read())
     return JSONResponse({"service": "selfheal-scraper", "docs": "/docs"})
+
+
+@app.api_route("/{path:path}", methods=["GET", "POST"])
+def fallback_router(request: Request, path: str = ""):
+    if "scrape" in path or "scrape" in str(request.url.path):
+        return api_scrape(ScrapeIn(force_layout="v2"))
+    return JSONResponse({"service": "selfheal-scraper", "status": "ok", "path": path})

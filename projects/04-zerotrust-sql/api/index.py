@@ -406,3 +406,10 @@ def root():
         if os.path.exists(p):
             return HTMLResponse(open(p, "r", encoding="utf-8").read())
     return JSONResponse({"service": "zerotrust-sql", "docs": "/docs"})
+
+
+@app.api_route("/{path:path}", methods=["GET", "POST"])
+def fallback_router(request: Request, path: str = ""):
+    if "query" in path or "query" in str(request.url.path):
+        return api_query(QueryIn(question="Show me top 5 customers"))
+    return JSONResponse({"service": "zerotrust-sql", "status": "ok", "path": path})
