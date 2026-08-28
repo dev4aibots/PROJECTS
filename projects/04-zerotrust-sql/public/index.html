@@ -1,147 +1,220 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZeroTrust-SQL — AST SQL Guardrails for NL Analytics</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Geist', 'sans-serif'],
-          mono: ['JetBrains Mono', 'monospace'],
-        }
-      }
-    }
-  }
-</script>
 <style>
-  body { background-color: #030508; color: #f1f5f9; font-family: 'Geist', sans-serif; }
-  .doppelrand {
-    background: rgba(12, 16, 26, 0.8);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.5rem;
-    padding: 0.5rem;
-  }
-  .doppelrand-core {
-    background: #07090e;
-    border-radius: calc(1.5rem - 0.5rem);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  }
-  .step-pending { opacity: 0.35; }
-  .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  pre { white-space: pre-wrap; word-break: break-all; }
+:root{--bg:#0b1020;--panel:#131a2e;--panel2:#1a2340;--line:#26304f;--text:#e6ebff;--dim:#8b96b8;--acc:#6d8bff;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5d6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}
+header{margin-bottom:20px}
+h1{font-size:26px}
+h1 .tag{font-size:12px;background:var(--acc);color:#fff;border-radius:20px;padding:2px 10px;vertical-align:middle;margin-left:8px}
+.sub{color:var(--dim);margin-top:4px}
+.links{margin-top:8px;font-size:13px}
+.links a{color:var(--acc);text-decoration:none;margin-right:14px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--acc)}
+label{display:block;font-size:12px;color:var(--dim);margin:8px 0 3px}
+input,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;font:inherit}
+textarea{min-height:70px;resize:vertical;font-family:var(--mono);font-size:13px}
+button{background:var(--acc);border:0;border-radius:8px;color:#fff;padding:9px 16px;font:600 14px inherit;cursor:pointer;margin-top:10px}
+button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--panel2);border:1px solid var(--line)}
+button.bad{background:var(--bad)}
+.samples button{width:100%;text-align:left;margin-top:8px;background:var(--panel2);border:1px solid var(--line);font-weight:500}
+.samples button.attack{border-color:var(--bad);color:var(--bad)}
+.samples .hint{font-size:12px;color:var(--dim)}
+.stepper{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.step{font-size:12px;border:1px solid var(--line);border-radius:16px;padding:3px 10px;color:var(--dim);background:var(--panel2)}
+.step.on{border-color:var(--acc);color:var(--text);background:rgba(109,139,255,.15)}
+.step.done{border-color:var(--ok);color:var(--ok)}
+.step.blocked{border-color:var(--bad);color:var(--bad)}
+.badge{display:inline-block;font-size:11px;border-radius:12px;padding:2px 9px;font-weight:700}
+.b-APPROVED{background:rgba(61,220,132,.15);color:var(--ok)}
+.b-BLOCKED{background:rgba(255,93,108,.15);color:var(--bad)}
+pre{background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.5 var(--mono);color:#c8d4ff;white-space:pre-wrap}
+.sqlbox{font-family:var(--mono);font-size:13px;background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:#9fd0ff;white-space:pre-wrap;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:6px 8px}
+th{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.reason{font-size:13px;color:var(--dim);margin:6px 0}
+.reason.bad{color:var(--bad)}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{margin-top:0}
+.tabs button.off{background:var(--panel2);border:1px solid var(--line);color:var(--dim)}
+canvas{width:100%;max-width:100%;background:#0a0f1e;border:1px solid var(--line);border-radius:8px;margin-top:10px}
+.meta{font-size:12px;color:var(--dim);margin-top:6px}
+.audit-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--panel2)}
+.audit-item .sql{font-family:var(--mono);font-size:12px;color:#9fd0ff;margin-top:4px;word-break:break-all}
+.audit-item .m{font-size:12px;color:var(--dim)}
+.toggle{font-size:12px;color:var(--acc);cursor:pointer;user-select:none;margin-top:10px;display:inline-block}
+.empty{color:var(--dim);font-size:13px;padding:14px;text-align:center}
+</style>
+<meta name="description" content="Interactive 04 zerotrust sql AI automation engineering project with a production-grade live demo.">
+<meta name="theme-color" content="#090b0f">
+<style id="portfolio-polish">
+
+/* Portfolio-grade interface layer — intentionally dependency-free. */
+:root{
+  --accent:#7ca8ff;--accent-rgb:124,168,255;
+  --canvas:#090b0f;--surface:#101318;--surface-2:#161a20;--surface-3:#1c2129;
+  --ink:#f4f6f8;--muted:#939ca8;--faint:#636c78;--hairline:rgba(255,255,255,.095);
+  --success:#70e1b2;--warning:#f6c76a;--danger:#ff817d;
+  --shadow:0 24px 70px rgba(0,0,0,.28);--radius:18px;
+  --sans:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--canvas)}
+body.project-shell{
+  min-height:100dvh;margin:0;padding:0!important;color:var(--ink)!important;
+  background:
+    radial-gradient(900px 560px at 88% -8%,rgba(var(--accent-rgb),.115),transparent 64%),
+    radial-gradient(760px 540px at -12% 42%,rgba(var(--accent-rgb),.055),transparent 70%),
+    var(--canvas)!important;font-family:var(--sans)!important;-webkit-font-smoothing:antialiased;
+}
+body.project-shell::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.28;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:linear-gradient(to bottom,black,transparent 82%);
+}
+body.project-shell>*{position:relative;z-index:1}
+.skip-link{position:fixed;z-index:50;top:12px;left:12px;transform:translateY(-160%);background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:8px;font-weight:700;transition:transform .18s ease-out}
+.skip-link:focus{transform:none}
+.wrap,.max-w-6xl{width:min(1280px,calc(100% - 48px))!important;max-width:1280px!important;margin-inline:auto!important;padding:42px 0 64px!important}
+header{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:24px 48px;align-items:end!important;margin:0 0 22px!important;padding:0 0 32px;border-bottom:1px solid var(--hairline)}
+header>div:first-of-type{max-width:850px}
+.eyebrow{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:-4px;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em}
+.signal-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(var(--accent-rgb),.11)}
+.eyebrow-rule{width:32px;height:1px;background:rgba(var(--accent-rgb),.5)}
+.eyebrow-note{color:var(--faint);font-weight:600;letter-spacing:.08em}
+header h1{margin:0!important;color:var(--ink)!important;font-size:clamp(2.45rem,5.4vw,4.9rem)!important;line-height:.95!important;letter-spacing:-.06em!important;font-weight:720!important;text-wrap:balance}
+header h1 .tag{display:inline-flex!important;vertical-align:middle!important;margin:0 0 0 12px!important;padding:5px 9px!important;border:1px solid rgba(var(--accent-rgb),.28)!important;border-radius:6px!important;background:rgba(var(--accent-rgb),.08)!important;color:var(--accent)!important;font-family:var(--mono)!important;font-size:10px!important;font-weight:600!important;letter-spacing:.03em!important}
+header .sub,header p{max-width:760px;margin-top:16px!important;color:#aeb6c1!important;font-size:15px!important;line-height:1.65!important;text-wrap:pretty}
+header .sub b,header p b{color:var(--ink);font-weight:600}
+header .links,header>div:last-child:not(:first-child){display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin:0!important}
+header a,.links a{display:inline-flex;align-items:center;min-height:38px;margin:0!important;padding:0 12px!important;border:1px solid var(--hairline)!important;border-radius:8px!important;background:rgba(255,255,255,.025)!important;color:#c6cdd6!important;text-decoration:none;font:600 11px/1 var(--mono)!important;transition:background .18s ease-out,border-color .18s ease-out,color .18s ease-out,transform .18s ease-out}
+header a:hover,.links a:hover{color:var(--ink)!important;border-color:rgba(var(--accent-rgb),.48)!important;background:rgba(var(--accent-rgb),.08)!important;transform:translateY(-1px)}
+.proof-strip{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 24px;border-block:1px solid var(--hairline)}
+.proof-item{padding:17px 20px;border-right:1px solid var(--hairline);color:var(--muted);font-size:12px}
+.proof-item:first-child{padding-left:0}.proof-item:last-child{border-right:0}
+.proof-item strong{display:block;margin-bottom:3px;color:var(--ink);font-size:13px;font-weight:650}
+.grid{gap:20px!important}.card,.bg-slate-900{
+  position:relative;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;
+  border:1px solid var(--hairline)!important;border-radius:var(--radius)!important;padding:22px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),var(--shadow)!important;backdrop-filter:blur(14px);
+}
+.card::after,.bg-slate-900::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(420px circle at var(--spot-x,50%) var(--spot-y,0%),rgba(var(--accent-rgb),.065),transparent 44%)}
+.card>* , .bg-slate-900>*{position:relative;z-index:1}
+.card h2,.bg-slate-900 h2{margin-bottom:14px!important;color:var(--ink)!important;font-size:13px!important;font-weight:680!important;letter-spacing:-.01em}
+.card h2::before,.bg-slate-900 h2::before{content:"";display:inline-block;width:7px;height:7px;margin-right:9px;border-radius:2px;background:var(--accent);box-shadow:0 0 14px rgba(var(--accent-rgb),.45)}
+.card .hint,.muted,.text-slate-400,.text-slate-500,.text-slate-600,.sub,.note,.meta{color:var(--muted)!important}
+input,textarea,select{width:100%;min-height:46px!important;border:1px solid var(--hairline)!important;border-radius:9px!important;background:#0d1014!important;color:var(--ink)!important;padding:11px 13px!important;font:500 14px/1.45 var(--sans)!important;outline:none;transition:border-color .18s ease-out,box-shadow .18s ease-out,background .18s ease-out}
+textarea{min-height:96px!important;resize:vertical}select{appearance:auto}
+input:hover,textarea:hover,select:hover{border-color:rgba(255,255,255,.18)!important}
+input:focus,textarea:focus,select:focus{border-color:rgba(var(--accent-rgb),.72)!important;box-shadow:0 0 0 4px rgba(var(--accent-rgb),.11)!important;background:#11151b!important}
+label{margin:12px 0 6px!important;color:#aeb6c1!important;font-size:11px!important;font-weight:650!important;letter-spacing:.02em}
+button{min-height:42px!important;border:1px solid transparent!important;border-radius:9px!important;background:var(--accent)!important;color:#0a0c0f!important;padding:10px 15px!important;font:700 12px/1.25 var(--sans)!important;cursor:pointer;box-shadow:none!important;transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease-out,border-color .18s ease-out,background .18s ease-out!important}
+button:hover{filter:brightness(1.08)!important;transform:translateY(-1px)}button:active{transform:translateY(1px) scale(.99)}button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+button.ghost,.samples button,.bg-slate-800{background:rgba(255,255,255,.04)!important;border-color:var(--hairline)!important;color:#d7dce3!important}
+button.ghost:hover,.samples button:hover{background:rgba(var(--accent-rgb),.085)!important;border-color:rgba(var(--accent-rgb),.35)!important;color:var(--ink)!important}
+button.bad,button.boom{background:rgba(255,129,125,.12)!important;border-color:rgba(255,129,125,.3)!important;color:#ffaaa7!important}
+button.warn{background:rgba(246,199,106,.14)!important;border-color:rgba(246,199,106,.32)!important;color:#f8d98f!important}
+button.ok{background:rgba(112,225,178,.14)!important;border-color:rgba(112,225,178,.32)!important;color:#92eac5!important}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}
+.stepper{gap:7px!important}.step{border:1px solid var(--hairline)!important;border-radius:7px!important;background:rgba(255,255,255,.025)!important;color:var(--faint)!important;padding:6px 10px!important;font:600 10px/1.2 var(--mono)!important;letter-spacing:.015em}
+.step.on,.step-active{border-color:rgba(var(--accent-rgb),.55)!important;background:rgba(var(--accent-rgb),.12)!important;color:var(--accent)!important}.step.done,.step-done{border-color:rgba(112,225,178,.3)!important;background:rgba(112,225,178,.08)!important;color:var(--success)!important}
+.badge,.pill{border-radius:6px!important;letter-spacing:.035em}.stat,.kv .box,.pc,.list-item,.audit-item,.heal-item,.reply,.approval,.twice{border:1px solid var(--hairline)!important;border-radius:11px!important;background:rgba(255,255,255,.028)!important}
+.stat .v,.kv .n,.pc .p{font-family:var(--mono)!important;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+table{width:100%;border-collapse:collapse}th{padding:10px 8px!important;color:var(--faint)!important;font:650 10px/1.2 var(--sans)!important;letter-spacing:.07em!important;text-transform:uppercase}td{padding:10px 8px!important;border-bottom:1px solid rgba(255,255,255,.065)!important;color:#c6cdd6}tbody tr{transition:background .15s ease-out}tbody tr:hover{background:rgba(var(--accent-rgb),.04)!important}
+pre,.sqlbox{border:1px solid var(--hairline)!important;border-radius:10px!important;background:#080a0d!important;color:#bdc8d6!important;font-family:var(--mono)!important;box-shadow:inset 0 1px 18px rgba(0,0,0,.24)}
+.empty{min-height:150px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.1);border-radius:11px;background:rgba(0,0,0,.09);color:var(--muted)!important;text-align:center}
+.toggle{display:inline-flex!important;align-items:center;min-height:36px;margin-top:12px!important;color:var(--accent)!important;font:650 11px/1 var(--mono)!important}
+footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var(--faint)!important;text-align:left!important;font:500 11px/1.6 var(--mono)!important}
+.fade-in,.card,.bg-slate-900{animation:enter .5s cubic-bezier(.2,.8,.2,1) both}.card:nth-child(2),.bg-slate-900:nth-child(2){animation-delay:.06s}.card:nth-child(3),.bg-slate-900:nth-child(3){animation-delay:.12s}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:900px){
+  .wrap,.max-w-6xl{width:min(100% - 28px,1280px)!important;padding-top:24px!important}
+  header{grid-template-columns:1fr!important;padding-bottom:24px!important}header .links,header>div:last-child:not(:first-child){justify-content:flex-start}
+  header h1{font-size:clamp(2.25rem,12vw,3.6rem)!important}.proof-strip{grid-template-columns:1fr}.proof-item{padding:12px 0!important;border-right:0;border-bottom:1px solid var(--hairline)}.proof-item:last-child{border-bottom:0}
+  .statrow{grid-template-columns:repeat(2,1fr)!important}.card,.bg-slate-900{padding:17px!important}.duo{grid-template-columns:1fr!important}
+  table{min-width:620px}.card:has(table),.bg-slate-900:has(table){overflow-x:auto}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8">
-<div class="max-w-6xl mx-auto space-y-6">
-
-  <!-- Header -->
-  <header class="flex flex-wrap items-center justify-between gap-4 py-4 px-6 rounded-2xl bg-slate-950/70 border border-white/10 backdrop-blur-xl">
-    <div>
-      <div class="flex items-center gap-2">
-        <span class="text-xl">🛡️</span>
-        <h1 class="text-xl font-bold text-white tracking-tight">ZeroTrust-SQL Guard</h1>
-        <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 font-semibold">Live Microservice</span>
-      </div>
-      <p class="text-xs text-slate-400 mt-1">Natural Language Text-to-SQL Analytics &bull; <code class="text-rose-300 font-mono">sqlglot</code> AST Tree Node Interceptor &bull; Read-Only Database</p>
-    </div>
-    
-    <div class="flex items-center gap-3 font-mono text-xs">
-      <a href="/docs" target="_blank" class="px-3.5 py-2 rounded-xl bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600/30 transition">📜 OpenAPI Docs</a>
-      <a href="/api/schema" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition">📋 Schema Allow-list</a>
-    </div>
-  </header>
-
-  <div class="grid md:grid-cols-2 gap-6">
-    <!-- LEFT: Query Triggers -->
-    <div class="doppelrand">
-      <div class="doppelrand-core p-6 space-y-4 font-mono text-xs">
-        <h2 class="font-bold text-white text-base font-sans">1 &bull; Natural Language Query or Attack Probe</h2>
-        
-        <div class="space-y-2">
-          <div class="text-slate-400">Valid Analytics Questions:</div>
-          <button onclick="ask('What are the top selling products?')" class="w-full text-left p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 text-slate-200 transition">
-            📈 Top Selling Products
-          </button>
-          <button onclick="ask('Show revenue by country')" class="w-full text-left p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 text-slate-200 transition">
-            🌍 Revenue by Country
-          </button>
-          <button onclick="ask('Monthly revenue trend')" class="w-full text-left p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 text-slate-200 transition">
-            📅 Monthly Revenue Trend
-          </button>
-        </div>
-
-        <div class="space-y-2 pt-2 border-t border-slate-800">
-          <div class="text-rose-400 font-bold">SQL Injection & Obfuscation Attack Vectors:</div>
-          <button onclick="rawSql('SELECT * FROM orders; DROP TABLE orders;')" class="w-full text-left p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-rose-300 hover:bg-rose-950/80 transition">
-            ☠️ Multi-Statement DROP Injection
-          </button>
-          <button onclick="rawSql('UPDATE orders SET status = \'refunded\'')" class="w-full text-left p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-rose-300 hover:bg-rose-950/80 transition">
-            ☠️ Mass UPDATE Statement
-          </button>
-          <button onclick="rawSql('SELECT * FROM sqlite_master')" class="w-full text-left p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-rose-300 hover:bg-rose-950/80 transition">
-            ☠️ Schema Probe (Outside Table Allow-list)
-          </button>
-        </div>
-
-        <div class="pt-2">
-          <label class="text-slate-400 block mb-1">Custom Natural Language Query:</label>
-          <div class="flex gap-2">
-            <input id="q" placeholder="e.g. revenue by category" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-indigo-500" onkeydown="if(event.key==='Enter')ask(this.value)">
-            <button onclick="ask(document.getElementById('q').value)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl font-sans text-xs transition">Ask</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- RIGHT: AST Pipeline Inspector -->
-    <div class="doppelrand">
-      <div class="doppelrand-core p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="font-bold text-white text-base">2 &bull; AST Interceptor & Execution Result</h2>
-          <div class="flex gap-2 font-mono text-xs">
-            <button id="tab-res" onclick="showTab('res')" class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold">Result</button>
-            <button id="tab-audit" onclick="showTab('audit');loadAudit()" class="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">Audit Log</button>
-          </div>
-        </div>
-
-        <!-- Stepper -->
-        <div id="stepper" class="flex flex-wrap gap-2 font-mono text-xs mb-4">
-          <span class="step px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">Question</span>
-          <span class="step px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">Schema Check</span>
-          <span class="step px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">SQL Generated</span>
-          <span class="step px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">AST Interceptor</span>
-          <span class="step px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">Database Run</span>
-        </div>
-        
-        <div id="pane-res">
-          <div id="out" class="text-xs text-slate-400 font-mono">Run a query or attack probe to inspect AST tree parsing & safety enforcement.</div>
-        </div>
-
-        <div id="pane-audit" class="hidden space-y-3 font-mono text-xs">
-          <div id="audit" class="text-slate-400">Loading security audit log…</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="text-center text-xs font-mono text-slate-500 py-6">
-    FastAPI &bull; <code class="text-slate-400 font-mono">sqlglot</code> AST &bull; Read-Only SQLite Warehouse &bull; Zero-Downtime Multi-LLM Failover
-  </footer>
-
+<body class="project-shell">
+<a class="skip-link" href="#main-content">Skip to workspace</a>
+<main id="main-content" class="wrap">
+<style>:root{--accent:#7ca8ff;--accent-rgb:124,168,255}</style>
+<header>
+  <div class="eyebrow"><span class="signal-dot"></span>04 / SAFE ANALYTICS<span class="eyebrow-rule"></span><span class="eyebrow-note">PORTFOLIO BUILD</span></div>
+  <h1>ZeroTrust-SQL <span class="tag" id="mode">demo</span></h1>
+  <div class="sub">Ask analytics questions in English. Every SQL statement — LLM-written or hand-typed — passes an <b>sqlglot AST safety interceptor</b> before a read-only warehouse. Destructive ops never reach the database.</div>
+  <div class="links"><a href="/docs" target="_blank">API docs (Swagger)</a><a href="/api/health" target="_blank">/api/health</a><a href="/api/schema" target="_blank">/api/schema</a><a href="/api/audit" target="_blank">/api/audit</a></div>
+</header>
+<div class="proof-strip" aria-label="Project highlights">
+  <div class="proof-item"><strong>AST-level interception</strong>Core engineering signal</div>
+  <div class="proof-item"><strong>Read-only execution</strong>Production control</div>
+  <div class="proof-item"><strong>Destructive SQL blocked</strong>Outcome demonstrated live</div>
 </div>
 
+<div class="grid">
+<div>
+  <div class="card samples">
+    <h2>1 · Ask a question</h2>
+    <div class="hint">Natural language → SQL → AST check → results. Or try to break it.</div>
+    <button onclick="ask('What are the top selling products?')">Top selling products</button>
+    <button onclick="ask('Show revenue by country')">Revenue by country</button>
+    <button onclick="ask('Monthly revenue trend')">Monthly revenue trend</button>
+    <button onclick="ask('Average order value')">Average order value</button>
+    <button onclick="ask('Revenue by customer segment')">Revenue by segment</button>
+    <button class="attack" onclick="rawSql('SELECT * FROM orders; DROP TABLE orders;')">Security test: an injection attack (multi-statement DROP)</button>
+    <button class="attack" onclick="rawSql('UPDATE orders SET status = &quot;refunded&quot;')">Security test: a mass UPDATE</button>
+    <button class="attack" onclick="rawSql('SELECT * FROM sqlite_master')">☠️ Probe schema table (outside allow-list)</button>
+    <label>Your own question</label>
+    <input id="q" placeholder="e.g. revenue by category" onkeydown="if(event.key==='Enter')ask(document.getElementById('q').value)">
+    <button onclick="ask(document.getElementById('q').value)">Ask</button>
+    <label>…or raw SQL (goes through the same guard)</label>
+    <textarea id="rawsql" placeholder="SELECT name, price FROM products ORDER BY price DESC"></textarea>
+    <button class="ghost" onclick="rawSql(document.getElementById('rawsql').value)">Run SQL through guard</button>
+  </div>
+  <div class="card">
+    <h2>Warehouse schema (allow-list)</h2>
+    <pre id="schema">loading…</pre>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>2 · Pipeline</h2>
+    <div class="stepper" id="stepper">
+      <span class="step">Question</span><span class="step">Schema inspected</span><span class="step">SQL generated</span><span class="step">AST safety check</span><span class="step">Executed on read-only DB</span>
+    </div>
+    <div class="tabs">
+      <button id="tab-result" onclick="showTab('result')">Result</button>
+      <button id="tab-audit" class="off" onclick="showTab('audit');loadAudit()">Audit log</button>
+    </div>
+
+    <div id="pane-result">
+      <div id="out" class="empty">Run a sample question — or an injection attack — to see the guard in action.</div>
+    </div>
+    <div id="pane-audit" style="display:none">
+      <div id="audit" class="empty">No audit entries yet.</div>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+
 <script>
+'use strict';
 const $ = id => document.getElementById(id);
 let lastJson = null;
 
@@ -153,9 +226,7 @@ async function api(path, opts) {
 function setSteps(n, blocked) {
   const steps = $('stepper').children;
   for (let i = 0; i < steps.length; i++) {
-    if (i < n) steps[i].className = 'px-2.5 py-1 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-300 font-bold';
-    else if (i === n) steps[i].className = blocked ? 'px-2.5 py-1 rounded-lg bg-rose-950 border border-rose-800 text-rose-300 font-bold' : 'px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800 text-indigo-300 font-bold';
-    else steps[i].className = 'px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-500';
+    steps[i].className = 'step' + (i < n ? ' done' : i === n ? (blocked ? ' blocked' : ' on') : '');
   }
 }
 
@@ -166,60 +237,99 @@ function render(d) {
   const blocked = d.ast_verdict === 'BLOCKED';
   setSteps(blocked ? 3 : 5, blocked);
   let h = '';
-  if (d.question) h += `<div class="text-slate-400 font-mono text-xs mb-2">Q: <b>${esc(d.question)}</b> &bull; Generator: ${esc(d.generator)} &bull; ${d.latency_ms} ms</div>`;
-  else h += `<div class="text-slate-400 font-mono text-xs mb-2">Raw SQL Input &bull; ${d.latency_ms} ms</div>`;
-  
-  h += `<div class="mb-3"><span class="px-3 py-1 rounded-xl text-xs font-mono font-bold ${blocked?'bg-rose-500/20 border border-rose-500/40 text-rose-300':'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'}">AST VERDICT: ${d.ast_verdict}</span></div>`;
-  h += `<div class="p-3.5 bg-black/80 border border-slate-800 rounded-xl text-xs font-mono text-indigo-300 mb-3">${esc(d.sql)}</div>`;
-  h += `<div class="p-3.5 rounded-xl text-xs font-mono mb-4 ${blocked?'bg-rose-950/60 border border-rose-800/60 text-rose-300':'bg-emerald-950/60 border border-emerald-800/60 text-emerald-300'}">${esc(d.reason)}</div>`;
-  
+  if (d.question) h += `<div class="meta">Q: <b>${esc(d.question)}</b> · generator: ${esc(d.generator)} · ${d.latency_ms} ms</div>`;
+  else h += `<div class="meta">raw SQL · ${d.latency_ms} ms</div>`;
+  h += `<div style="margin:8px 0"><span class="badge b-${d.ast_verdict}">AST ${d.ast_verdict}</span></div>`;
+  h += `<div class="sqlbox">${esc(d.sql)}</div>`;
+  h += `<div class="reason ${blocked?'bad':''}">${esc(d.reason)}</div>`;
   if (!blocked) {
     if (d.rows.length) {
-      h += '<table class="w-full text-xs font-mono border-collapse mb-3"><thead><tr class="border-b border-slate-800 text-slate-500 text-left">' + d.columns.map(c=>`<th class="pb-2">${esc(c)}</th>`).join('') + '</tr></thead><tbody>';
-      for (const row of d.rows.slice(0, 25)) h += '<tr class="border-b border-slate-800/50">' + row.map(v=>`<td class="py-2">${esc(v===null?'∅':v)}</td>`).join('') + '</tr>';
+      h += '<table><thead><tr>' + d.columns.map(c=>`<th>${esc(c)}</th>`).join('') + '</tr></thead><tbody>';
+      for (const row of d.rows.slice(0, 25)) h += '<tr>' + row.map(v=>`<td>${esc(v===null?'∅':v)}</td>`).join('') + '</tr>';
       h += '</tbody></table>';
-    } else h += '<div class="text-slate-500 font-mono text-xs">0 rows returned</div>';
+      if (d.rows.length > 25) h += `<div class="meta">…showing 25 of ${d.row_count} rows</div>`;
+    } else h += '<div class="empty">0 rows</div>';
+    if (d.chart && d.chart.type === 'bar') h += '<canvas id="chart" width="760" height="260"></canvas>';
   }
+  h += '<span class="toggle" onclick="toggleJson()">{ } raw JSON</span><pre id="rawjson" style="display:none"></pre>';
   $('out').innerHTML = h;
+  $('out').className = '';
+  if (!blocked && d.chart && d.chart.type === 'bar') drawChart(d);
+}
+
+function drawChart(d) {
+  const cv = $('chart'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const xi = d.columns.indexOf(d.chart.x), yi = d.columns.indexOf(d.chart.y);
+  if (xi < 0 || yi < 0) return;
+  const data = d.rows.slice(0, 12);
+  const max = Math.max(...data.map(r => +r[yi] || 0), 1);
+  const W = cv.width, H = cv.height, pad = 34, bw = (W - pad * 2) / data.length;
+  ctx.clearRect(0, 0, W, H);
+  data.forEach((r, i) => {
+    const v = +r[yi] || 0, h = (H - pad * 2) * v / max;
+    ctx.fillStyle = '#6d8bff';
+    ctx.fillRect(pad + i * bw + bw * .15, H - pad - h, bw * .7, h);
+    ctx.fillStyle = '#8b96b8'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(String(r[xi]).slice(0, 10), pad + i * bw + bw / 2, H - pad + 13);
+    ctx.fillStyle = '#c8d4ff';
+    ctx.fillText(Math.round(v).toLocaleString(), pad + i * bw + bw / 2, H - pad - h - 5);
+  });
+}
+
+function toggleJson() {
+  const p = $('rawjson');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  p.textContent = JSON.stringify(lastJson, null, 2);
 }
 
 async function ask(q) {
   if (!q || !q.trim()) return;
   $('q').value = q;
   setSteps(1, false);
-  $('out').innerHTML = '<div class="text-slate-500 font-mono text-xs">Running AST tree inspection…</div>';
-  showTab('res');
+  $('out').innerHTML = '<div class="empty">running…</div>';
+  showTab('result');
   render(await api('/api/query', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q})}));
 }
 
 async function rawSql(sql) {
   if (!sql || !sql.trim()) return;
+  $('rawsql').value = sql;
   setSteps(3, false);
-  $('out').innerHTML = '<div class="text-slate-500 font-mono text-xs">Running AST tree inspection…</div>';
-  showTab('res');
+  $('out').innerHTML = '<div class="empty">running…</div>';
+  showTab('result');
   render(await api('/api/sql', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sql})}));
 }
 
 function showTab(t) {
-  $('pane-res').style.display = t === 'res' ? '' : 'none';
+  $('pane-result').style.display = t === 'result' ? '' : 'none';
   $('pane-audit').style.display = t === 'audit' ? '' : 'none';
-  $('tab-res').className = t === 'res' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold' : 'px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400';
-  $('tab-audit').className = t === 'audit' ? 'px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold' : 'px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400';
+  $('tab-result').className = t === 'result' ? '' : 'off';
+  $('tab-audit').className = t === 'audit' ? '' : 'off';
 }
 
 async function loadAudit() {
   const d = await api('/api/audit');
-  if (!d.entries.length) { $('audit').innerHTML = 'No security audit entries recorded yet.'; return; }
+  if (!d.entries.length) { $('audit').innerHTML = '<div class="empty">No audit entries yet.</div>'; return; }
   $('audit').innerHTML = d.entries.map(e => `
-    <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5 font-mono text-xs">
-      <div class="flex items-center justify-between">
-        <span class="px-2 py-0.5 rounded font-bold ${e.verdict==='APPROVED'?'bg-emerald-950 text-emerald-400':'bg-rose-950 text-rose-400'}">${e.verdict}</span>
-        <span class="text-slate-500">${e.at}</span>
-      </div>
-      <div class="text-indigo-300">${esc(e.sql)}</div>
-      <div class="text-slate-400">${esc(e.reason)}</div>
+    <div class="audit-item">
+      <span class="badge b-${e.verdict}">${e.verdict}</span>
+      <span class="m">${e.at} · ${e.source}${e.question ? ' · “' + esc(e.question) + '”' : ''}</span>
+      <div class="sql">${esc(e.sql)}</div>
+      <div class="m">${esc(e.reason)}${e.rows !== undefined ? ' · ' + e.rows + ' rows' : ''}</div>
     </div>`).join('');
 }
+
+async function init() {
+  try {
+    const h = await api('/api/health');
+    $('mode').textContent = h.mode;
+    const s = await api('/api/schema');
+    $('schema').textContent = Object.entries(s.tables).map(([t, cols]) => `${t}(${cols.join(', ')})`).join('\n')
+      + `\n\nmax LIMIT enforced: ${s.max_limit}`;
+  } catch (e) { $('schema').textContent = 'API unreachable: ' + e.message; }
+}
+init();
 </script>
 </body>
 </html>
