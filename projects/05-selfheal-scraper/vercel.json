@@ -1,6 +1,6 @@
 {
-  "routes": [
-    { "src": "/(.*)", "dest": "api/index.py" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.py" }
   ],
   "crons": [
     { "path": "/api/cron", "schedule": "0 0 * * *" }
