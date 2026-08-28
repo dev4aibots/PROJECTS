@@ -398,7 +398,11 @@ def api_health():
 
 @app.get("/")
 def root():
-    path = os.path.join(os.path.dirname(__file__), "..", "public", "index.html")
-    if os.path.exists(path):
-        return FileResponse(path)
+    for p in [
+        os.path.join(os.path.dirname(__file__), "..", "public", "index.html"),
+        os.path.join(os.path.dirname(__file__), "public", "index.html"),
+        "public/index.html"
+    ]:
+        if os.path.exists(p):
+            return HTMLResponse(open(p, "r", encoding="utf-8").read())
     return JSONResponse({"service": "zerotrust-sql", "docs": "/docs"})
