@@ -1,207 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FinAudit IDP — Financial Audit & Document Processing</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Geist', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
 <style>
-  body{background:#0b1020;color:#e2e8f0;font-family:ui-sans-serif,system-ui}
-  .card{background:#111a2e;border:1px solid #1e2a45;border-radius:14px}
-  .step-pending{opacity:.35}
-  .fade-in{animation:f .4s ease}
-  @keyframes f{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
-  pre{white-space:pre-wrap;word-break:break-all}
-</style>
-<meta name="description" content="Interactive 01 finaudit idp AI automation engineering project with a production-grade live demo.">
-<meta name="theme-color" content="#090b0f">
-<style id="portfolio-polish">
-
-/* Portfolio-grade interface layer — intentionally dependency-free. */
-:root{
-  --accent:#7ca8ff;--accent-rgb:124,168,255;
-  --canvas:#090b0f;--surface:#101318;--surface-2:#161a20;--surface-3:#1c2129;
-  --ink:#f4f6f8;--muted:#939ca8;--faint:#636c78;--hairline:rgba(255,255,255,.095);
-  --success:#70e1b2;--warning:#f6c76a;--danger:#ff817d;
-  --shadow:0 24px 70px rgba(0,0,0,.28);--radius:18px;
-  --sans:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
-  --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--canvas)}
-body.project-shell{
-  min-height:100dvh;margin:0;padding:0!important;color:var(--ink)!important;
-  background:
-    radial-gradient(900px 560px at 88% -8%,rgba(var(--accent-rgb),.115),transparent 64%),
-    radial-gradient(760px 540px at -12% 42%,rgba(var(--accent-rgb),.055),transparent 70%),
-    var(--canvas)!important;font-family:var(--sans)!important;-webkit-font-smoothing:antialiased;
-}
-body.project-shell::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.28;
-  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:48px 48px;mask-image:linear-gradient(to bottom,black,transparent 82%);
-}
-body.project-shell>*{position:relative;z-index:1}
-.skip-link{position:fixed;z-index:50;top:12px;left:12px;transform:translateY(-160%);background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:8px;font-weight:700;transition:transform .18s ease-out}
-.skip-link:focus{transform:none}
-.wrap,.max-w-6xl{width:min(1280px,calc(100% - 48px))!important;max-width:1280px!important;margin-inline:auto!important;padding:42px 0 64px!important}
-header{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:24px 48px;align-items:end!important;margin:0 0 22px!important;padding:0 0 32px;border-bottom:1px solid var(--hairline)}
-header>div:first-of-type{max-width:850px}
-.eyebrow{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:-4px;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em}
-.signal-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(var(--accent-rgb),.11)}
-.eyebrow-rule{width:32px;height:1px;background:rgba(var(--accent-rgb),.5)}
-.eyebrow-note{color:var(--faint);font-weight:600;letter-spacing:.08em}
-header h1{margin:0!important;color:var(--ink)!important;font-size:clamp(2.45rem,5.4vw,4.9rem)!important;line-height:.95!important;letter-spacing:-.06em!important;font-weight:720!important;text-wrap:balance}
-header h1 .tag{display:inline-flex!important;vertical-align:middle!important;margin:0 0 0 12px!important;padding:5px 9px!important;border:1px solid rgba(var(--accent-rgb),.28)!important;border-radius:6px!important;background:rgba(var(--accent-rgb),.08)!important;color:var(--accent)!important;font-family:var(--mono)!important;font-size:10px!important;font-weight:600!important;letter-spacing:.03em!important}
-header .sub,header p{max-width:760px;margin-top:16px!important;color:#aeb6c1!important;font-size:15px!important;line-height:1.65!important;text-wrap:pretty}
-header .sub b,header p b{color:var(--ink);font-weight:600}
-header .links,header>div:last-child:not(:first-child){display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin:0!important}
-header a,.links a{display:inline-flex;align-items:center;min-height:38px;margin:0!important;padding:0 12px!important;border:1px solid var(--hairline)!important;border-radius:8px!important;background:rgba(255,255,255,.025)!important;color:#c6cdd6!important;text-decoration:none;font:600 11px/1 var(--mono)!important;transition:background .18s ease-out,border-color .18s ease-out,color .18s ease-out,transform .18s ease-out}
-header a:hover,.links a:hover{color:var(--ink)!important;border-color:rgba(var(--accent-rgb),.48)!important;background:rgba(var(--accent-rgb),.08)!important;transform:translateY(-1px)}
-.proof-strip{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 24px;border-block:1px solid var(--hairline)}
-.proof-item{padding:17px 20px;border-right:1px solid var(--hairline);color:var(--muted);font-size:12px}
-.proof-item:first-child{padding-left:0}.proof-item:last-child{border-right:0}
-.proof-item strong{display:block;margin-bottom:3px;color:var(--ink);font-size:13px;font-weight:650}
-.grid{gap:20px!important}.card,.bg-slate-900{
-  position:relative;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;
-  border:1px solid var(--hairline)!important;border-radius:var(--radius)!important;padding:22px!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.035),var(--shadow)!important;backdrop-filter:blur(14px);
-}
-.card::after,.bg-slate-900::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(420px circle at var(--spot-x,50%) var(--spot-y,0%),rgba(var(--accent-rgb),.065),transparent 44%)}
-.card>* , .bg-slate-900>*{position:relative;z-index:1}
-.card h2,.bg-slate-900 h2{margin-bottom:14px!important;color:var(--ink)!important;font-size:13px!important;font-weight:680!important;letter-spacing:-.01em}
-.card h2::before,.bg-slate-900 h2::before{content:"";display:inline-block;width:7px;height:7px;margin-right:9px;border-radius:2px;background:var(--accent);box-shadow:0 0 14px rgba(var(--accent-rgb),.45)}
-.card .hint,.muted,.text-slate-400,.text-slate-500,.text-slate-600,.sub,.note,.meta{color:var(--muted)!important}
-input,textarea,select{width:100%;min-height:46px!important;border:1px solid var(--hairline)!important;border-radius:9px!important;background:#0d1014!important;color:var(--ink)!important;padding:11px 13px!important;font:500 14px/1.45 var(--sans)!important;outline:none;transition:border-color .18s ease-out,box-shadow .18s ease-out,background .18s ease-out}
-textarea{min-height:96px!important;resize:vertical}select{appearance:auto}
-input:hover,textarea:hover,select:hover{border-color:rgba(255,255,255,.18)!important}
-input:focus,textarea:focus,select:focus{border-color:rgba(var(--accent-rgb),.72)!important;box-shadow:0 0 0 4px rgba(var(--accent-rgb),.11)!important;background:#11151b!important}
-label{margin:12px 0 6px!important;color:#aeb6c1!important;font-size:11px!important;font-weight:650!important;letter-spacing:.02em}
-button{min-height:42px!important;border:1px solid transparent!important;border-radius:9px!important;background:var(--accent)!important;color:#0a0c0f!important;padding:10px 15px!important;font:700 12px/1.25 var(--sans)!important;cursor:pointer;box-shadow:none!important;transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease-out,border-color .18s ease-out,background .18s ease-out!important}
-button:hover{filter:brightness(1.08)!important;transform:translateY(-1px)}button:active{transform:translateY(1px) scale(.99)}button:disabled{opacity:.55;cursor:not-allowed;transform:none}
-button.ghost,.samples button,.bg-slate-800{background:rgba(255,255,255,.04)!important;border-color:var(--hairline)!important;color:#d7dce3!important}
-button.ghost:hover,.samples button:hover{background:rgba(var(--accent-rgb),.085)!important;border-color:rgba(var(--accent-rgb),.35)!important;color:var(--ink)!important}
-button.bad,button.boom{background:rgba(255,129,125,.12)!important;border-color:rgba(255,129,125,.3)!important;color:#ffaaa7!important}
-button.warn{background:rgba(246,199,106,.14)!important;border-color:rgba(246,199,106,.32)!important;color:#f8d98f!important}
-button.ok{background:rgba(112,225,178,.14)!important;border-color:rgba(112,225,178,.32)!important;color:#92eac5!important}
-a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}
-.stepper{gap:7px!important}.step{border:1px solid var(--hairline)!important;border-radius:7px!important;background:rgba(255,255,255,.025)!important;color:var(--faint)!important;padding:6px 10px!important;font:600 10px/1.2 var(--mono)!important;letter-spacing:.015em}
-.step.on,.step-active{border-color:rgba(var(--accent-rgb),.55)!important;background:rgba(var(--accent-rgb),.12)!important;color:var(--accent)!important}.step.done,.step-done{border-color:rgba(112,225,178,.3)!important;background:rgba(112,225,178,.08)!important;color:var(--success)!important}
-.badge,.pill{border-radius:6px!important;letter-spacing:.035em}.stat,.kv .box,.pc,.list-item,.audit-item,.heal-item,.reply,.approval,.twice{border:1px solid var(--hairline)!important;border-radius:11px!important;background:rgba(255,255,255,.028)!important}
-.stat .v,.kv .n,.pc .p{font-family:var(--mono)!important;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
-table{width:100%;border-collapse:collapse}th{padding:10px 8px!important;color:var(--faint)!important;font:650 10px/1.2 var(--sans)!important;letter-spacing:.07em!important;text-transform:uppercase}td{padding:10px 8px!important;border-bottom:1px solid rgba(255,255,255,.065)!important;color:#c6cdd6}tbody tr{transition:background .15s ease-out}tbody tr:hover{background:rgba(var(--accent-rgb),.04)!important}
-pre,.sqlbox{border:1px solid var(--hairline)!important;border-radius:10px!important;background:#080a0d!important;color:#bdc8d6!important;font-family:var(--mono)!important;box-shadow:inset 0 1px 18px rgba(0,0,0,.24)}
-.empty{min-height:150px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.1);border-radius:11px;background:rgba(0,0,0,.09);color:var(--muted)!important;text-align:center}
-.toggle{display:inline-flex!important;align-items:center;min-height:36px;margin-top:12px!important;color:var(--accent)!important;font:650 11px/1 var(--mono)!important}
-footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var(--faint)!important;text-align:left!important;font:500 11px/1.6 var(--mono)!important}
-.fade-in,.card,.bg-slate-900{animation:enter .5s cubic-bezier(.2,.8,.2,1) both}.card:nth-child(2),.bg-slate-900:nth-child(2){animation-delay:.06s}.card:nth-child(3),.bg-slate-900:nth-child(3){animation-delay:.12s}
-@keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@media(max-width:900px){
-  .wrap,.max-w-6xl{width:min(100% - 28px,1280px)!important;padding-top:24px!important}
-  header{grid-template-columns:1fr!important;padding-bottom:24px!important}header .links,header>div:last-child:not(:first-child){justify-content:flex-start}
-  header h1{font-size:clamp(2.25rem,12vw,3.6rem)!important}.proof-strip{grid-template-columns:1fr}.proof-item{padding:12px 0!important;border-right:0;border-bottom:1px solid var(--hairline)}.proof-item:last-child{border-bottom:0}
-  .statrow{grid-template-columns:repeat(2,1fr)!important}.card,.bg-slate-900{padding:17px!important}.duo{grid-template-columns:1fr!important}
-  table{min-width:620px}.card:has(table),.bg-slate-900:has(table){overflow-x:auto}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-
+  body { background-color: #070a12; color: #f8fafc; font-family: 'Geist', sans-serif; }
+  .card-panel {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+  }
+  .step-pending { opacity: 0.35; }
+  .fade-in { animation: fadeIn 0.35s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  pre { white-space: pre-wrap; word-break: break-all; }
 </style>
 </head>
-<body class="min-h-screen project-shell">
-<a class="skip-link" href="#main-content">Skip to workspace</a>
-<main id="main-content" class="max-w-6xl mx-auto p-6">
-  <!-- Header -->
-  <style>:root{--accent:#70e1b2;--accent-rgb:112,225,178}</style>
-<header class="flex flex-wrap items-center justify-between gap-3 mb-6">
-  <div class="eyebrow"><span class="signal-dot"></span>01 / FINANCIAL AI<span class="eyebrow-rule"></span><span class="eyebrow-note">PORTFOLIO BUILD</span></div>
+<body class="min-h-screen p-4 sm:p-8 antialiased">
+<div class="max-w-6xl mx-auto space-y-6">
+
+  <!-- Navigation Header -->
+  <header class="flex flex-wrap items-center justify-between gap-4 py-4 px-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
     <div>
-      <h1 class="text-2xl font-bold text-white">FinAudit IDP</h1>
-      <p class="text-sm text-slate-400">Intelligent Document Processing · Σ-verification · human-in-the-loop routing</p>
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🧾</span>
+        <h1 class="text-xl font-bold text-white tracking-tight">FinAudit IDP</h1>
+        <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold">Live Microservice</span>
+      </div>
+      <p class="text-xs text-slate-400 mt-1">Intelligent Document Processing &bull; Python <code class="text-emerald-300 font-mono">Decimal</code> Σ-Verification &bull; Human Review Queue Routing</p>
     </div>
-    <div class="flex gap-2">
-      <a href="/docs" target="_blank" class="px-3 py-2 text-xs rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30">OpenAPI / Swagger</a>
-      <button onclick="loadStats()" class="px-3 py-2 text-xs rounded-lg bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30">Telemetry / Stats</button>
+    
+    <div class="flex items-center gap-3 font-mono text-xs">
+      <a href="/docs" target="_blank" class="px-4 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 transition">📜 OpenAPI / Swagger Docs</a>
+      <button onclick="loadStats()" class="px-4 py-2 rounded-xl bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30 transition">📈 Telemetry</button>
     </div>
   </header>
-<div class="proof-strip" aria-label="Project highlights">
-  <div class="proof-item"><strong>Exact decimal verification</strong>Core engineering signal</div>
-  <div class="proof-item"><strong>Confidence-routed review</strong>Production control</div>
-  <div class="proof-item"><strong>0 hallucinated totals</strong>Outcome demonstrated live</div>
-</div>
 
-  <!-- Mode banner -->
-  <div id="modeBanner" class="card p-3 mb-6 text-xs text-slate-300"></div>
+  <!-- Status Banner -->
+  <div id="modeBanner" class="px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300"></div>
 
   <div class="grid md:grid-cols-2 gap-6">
-    <!-- LEFT: input trigger -->
-    <div class="card p-5">
-      <h2 class="font-semibold text-white mb-3">1 · Submit an invoice</h2>
-      <div id="dropzone" class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center text-slate-400 text-sm cursor-pointer hover:border-sky-500 hover:text-sky-300 transition"
+    <!-- LEFT: Input Panel -->
+    <div class="card-panel space-y-4">
+      <h2 class="font-bold text-white text-base">Invoice Submission & Document Intake</h2>
+      
+      <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-2xl p-8 text-center text-slate-400 text-xs cursor-pointer transition bg-slate-950/60"
            ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
-        Drag & drop a PDF / image invoice here<br><span class="text-xs">(sent to Gemini Vision when GEMINI_API_KEY is set)</span>
+        Drag & drop a PDF / image invoice here<br>
+        <span class="text-[11px] text-slate-500 mt-1 block">(Sent to Gemini Vision when GEMINI_API_KEY is configured)</span>
       </div>
       <input type="file" id="fileInput" class="hidden" onchange="handleFile(this.files[0])">
-      <div class="mt-4 text-xs text-slate-400 mb-2">…or click to try sample data:</div>
-      <div class="flex flex-wrap gap-2">
-        <button onclick="runSample('clean')" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium">✅ Clean invoice → auto-approve</button>
-        <button onclick="runSample('mismatch')" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium">⚠️ Mismatched invoice → review queue</button>
+      
+      <div class="text-xs text-slate-400 font-mono pt-2">Run zero-key interactive samples:</div>
+      <div class="flex flex-wrap gap-3">
+        <button onclick="runSample('clean')" class="flex-1 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-lg shadow-emerald-600/20">
+          ✅ Clean Invoice → Auto-Approve
+        </button>
+        <button onclick="runSample('mismatch')" class="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition shadow-lg shadow-rose-600/20">
+          ⚠️ Mismatched Invoice → Review Queue
+        </button>
       </div>
 
-      <!-- Execution stepper -->
-      <div class="mt-6">
-        <h3 class="text-xs uppercase tracking-wide text-slate-500 mb-2">Live execution</h3>
-        <div id="stepper" class="space-y-1.5 text-sm"></div>
+      <!-- Stepper -->
+      <div class="pt-4 border-t border-slate-800">
+        <h3 class="text-[11px] uppercase tracking-wider font-mono text-slate-400 mb-3 font-semibold">Pipeline Execution Stepper</h3>
+        <div id="stepper" class="space-y-2 font-mono text-xs"></div>
       </div>
     </div>
 
-    <!-- RIGHT: output card -->
-    <div class="card p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-white">2 · Result</h2>
-        <button id="jsonToggle" onclick="toggleJson()" class="hidden px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">{ } View Raw JSON</button>
+    <!-- RIGHT: Result Inspector -->
+    <div class="card-panel space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold text-white text-base">Document Extraction & Verification Result</h2>
+        <button id="jsonToggle" onclick="toggleJson()" class="hidden px-3 py-1 text-xs font-mono rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300">{ } View Raw JSON</button>
       </div>
-      <div id="result" class="text-sm text-slate-400">Run a sample to see the extraction, arithmetic verification and routing decision.</div>
-      <pre id="rawJson" class="hidden mt-3 p-3 bg-black/40 rounded-lg text-xs text-lime-300 max-h-96 overflow-auto"></pre>
+      
+      <div id="result" class="text-xs text-slate-400">Run a sample invoice on the left to inspect document extraction, exact arithmetic verification, and automated routing decisions.</div>
+      <pre id="rawJson" class="hidden mt-4 p-4 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-mono text-emerald-300 max-h-96 overflow-auto"></pre>
     </div>
   </div>
 
-  <!-- Review queue -->
-  <div class="card p-5 mt-6">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="font-semibold text-white">3 · Human review queue</h2>
-      <button onclick="loadQueue()" class="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600">↻ Refresh</button>
+  <!-- Review Queue -->
+  <div class="card-panel space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-bold text-white text-base">Human-in-the-Loop Review Queue</h2>
+      <button onclick="loadQueue()" class="px-3.5 py-1.5 text-xs font-mono rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300">↻ Refresh Queue</button>
     </div>
-    <div id="queue" class="text-sm text-slate-400">Empty — submit the mismatched sample to populate it.</div>
+    <div id="queue" class="text-xs font-mono text-slate-400">Empty — submit the mismatched sample invoice to populate this review queue.</div>
   </div>
 
-  <div id="stats" class="card p-5 mt-6 hidden"></div>
+  <div id="stats" class="card-panel hidden"></div>
 
-  <footer class="text-center text-xs text-slate-600 mt-8">
-    FastAPI · Pydantic v2 · exact Decimal arithmetic · Gemini 1.5 Vision · Vercel Serverless · $0 infra
+  <footer class="text-center text-xs font-mono text-slate-500 py-6 border-t border-slate-800">
+    FastAPI &bull; Pydantic v2 &bull; Python <code class="text-slate-400 font-mono">Decimal</code> Math &bull; Gemini Vision &bull; Multi-LLM Failover
   </footer>
-</main>
+
+</div>
 
 <script>
 const API = '';
-const STEPS = ['Webhook received','Extracting (Vision / demo extractor)','Validating Pydantic schema','Σ Arithmetic verification','Routing decision'];
+const STEPS = ['Webhook Received','Extracting via Vision / Failover LLM','Pydantic Schema Parsing','Exact Python Decimal Σ-Verification','Routing Decision & State Dispatch'];
 let lastDoc = null;
 
 async function init(){
   try{
     const h = await (await fetch(API+'/api/health')).json();
     document.getElementById('modeBanner').innerHTML =
-      `Mode: <b class="${h.mode==='demo'?'text-amber-300':'text-emerald-300'}">${h.mode.toUpperCase()}</b>
-       · Gemini Vision: ${badge(h.integrations.gemini_vision)} · Slack alerts: ${badge(h.integrations.slack_alerts)} · Supabase: ${badge(h.integrations.supabase)}
-       <span class="text-slate-500">— demo mode is fully functional with zero API keys.</span>`;
+      `Backend Mode: <b class="${h.mode==='demo'?'text-amber-300':'text-emerald-300'}">${h.mode.toUpperCase()}</b>
+       &bull; Gemini Vision: ${badge(h.integrations.gemini_vision)} &bull; Slack Alerts: ${badge(h.integrations.slack_alerts)} &bull; Supabase DB: ${badge(h.integrations.supabase)}
+       <span class="text-slate-500 font-normal ml-2">— Zero API key demo mode active with full functionality.</span>`;
   }catch(e){
-    document.getElementById('modeBanner').innerHTML='<span class="text-rose-400">API unreachable — start the backend (uvicorn api.index:app) or deploy to Vercel.</span>';
+    document.getElementById('modeBanner').innerHTML='<span class="text-rose-400 font-bold">API Offline — Start Uvicorn or verify Vercel environment.</span>';
   }
   loadQueue();
 }
-const badge = on => on?'<span class="text-emerald-400">on</span>':'<span class="text-slate-500">off</span>';
+const badge = on => on?'<span class="text-emerald-400 font-bold">ACTIVE</span>':'<span class="text-slate-500">OFFLINE (DEMO FALLBACK)</span>';
 
 function renderStepper(done){
   document.getElementById('stepper').innerHTML = STEPS.map((s,i)=>
-    `<div class="flex items-center gap-2 ${i<done?'':'step-pending'} fade-in">
+    `<div class="flex items-center gap-2.5 ${i<done?'':'step-pending'} fade-in">
        <span>${i<done?'✅':'⬜'}</span><span>${s}</span></div>`).join('');
 }
 
@@ -216,7 +151,7 @@ function handleFile(f){
 
 async function run(payload){
   renderStepper(0);
-  for(let i=1;i<=3;i++){ await new Promise(r=>setTimeout(r,220)); renderStepper(i); }
+  for(let i=1;i<=3;i++){ await new Promise(r=>setTimeout(r,200)); renderStepper(i); }
   const res = await fetch(API+'/api/documents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   const doc = await res.json();
   renderStepper(5);
@@ -226,44 +161,47 @@ async function run(payload){
 }
 
 function renderResult(d){
-  if(!d.invoice){ document.getElementById('result').innerHTML=`<span class="text-rose-400">${JSON.stringify(d)}</span>`; return; }
+  if(!d.invoice){ document.getElementById('result').innerHTML=`<span class="text-rose-400 font-mono">${JSON.stringify(d)}</span>`; return; }
   const v = d.verification;
   const inv = d.invoice;
   const grand = v.checks.find(c=>c.check==='grand_total');
   document.getElementById('jsonToggle').classList.remove('hidden');
   document.getElementById('rawJson').textContent = JSON.stringify(d,null,2);
   document.getElementById('result').innerHTML = `
-    <div class="fade-in">
-      <div class="flex flex-wrap gap-2 mb-3">
+    <div class="fade-in space-y-4">
+      <div class="flex flex-wrap gap-2 font-mono">
         ${d.status==='AUTO_APPROVED'
-          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">AUTO-APPROVED</span>'
-          :'<span class="px-2 py-1 rounded bg-amber-600/30 text-amber-300 text-xs font-bold">NEEDS HUMAN REVIEW</span>'}
+          ?'<span class="px-3 py-1 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">STATUS: AUTO_APPROVED</span>'
+          :'<span class="px-3 py-1 rounded-xl bg-amber-600/20 border border-amber-500/40 text-amber-300 text-xs font-bold">STATUS: NEEDS_HUMAN_REVIEW</span>'}
         ${v.verified
-          ?'<span class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 text-xs font-bold">Σ VERIFICATION: PASS</span>'
-          :'<span class="px-2 py-1 rounded bg-rose-600/30 text-rose-300 text-xs font-bold">Σ VERIFICATION: FAIL</span>'}
+          ?'<span class="px-3 py-1 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">Σ MATH: PASS</span>'
+          :'<span class="px-3 py-1 rounded-xl bg-rose-600/20 border border-rose-500/40 text-rose-300 text-xs font-bold">Σ MATH: FAIL (DISCREPANCY DETECTED)</span>'}
       </div>
-      <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+
+      <div class="grid grid-cols-2 gap-3 text-xs font-mono bg-slate-950 p-4 rounded-xl border border-slate-800">
         <div><span class="text-slate-500">Vendor</span><br><b class="text-white">${inv.vendor}</b></div>
         <div><span class="text-slate-500">Invoice #</span><br><b class="text-white">${inv.invoice_number||'—'}</b></div>
-        <div><span class="text-slate-500">Extractor</span><br>${d.extractor}</div>
-        <div><span class="text-slate-500">Confidence</span><br>
-          <div class="w-full bg-slate-700 h-2 rounded mt-1"><div class="h-2 rounded ${+d.confidence>=0.85?'bg-emerald-500':'bg-amber-500'}" style="width:${(+d.confidence*100)}%"></div></div>
+        <div><span class="text-slate-500">Extractor Engine</span><br><span class="text-indigo-300">${d.extractor}</span></div>
+        <div><span class="text-slate-500">Extraction Confidence</span><br>
+          <div class="w-full bg-slate-800 h-1.5 rounded mt-1.5 overflow-hidden"><div class="h-full ${+d.confidence>=0.85?'bg-emerald-500':'bg-amber-500'}" style="width:${(+d.confidence*100)}%"></div></div>
           ${(+d.confidence*100).toFixed(0)}% (threshold 85%)
         </div>
       </div>
-      <table class="w-full text-xs mb-3">
-        <thead><tr class="text-slate-500 text-left"><th class="py-1">Item</th><th>Qty</th><th>Unit</th><th>Amount</th><th>Math</th></tr></thead>
+
+      <table class="w-full text-xs font-mono border-collapse">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-800"><th class="pb-2">Item</th><th class="pb-2">Qty</th><th class="pb-2">Price</th><th class="pb-2">Amount</th><th class="pb-2">Math Check</th></tr></thead>
         <tbody>${inv.line_items.map((li,i)=>{
           const c=v.checks[i];
-          return `<tr class="border-t border-slate-700/60"><td class="py-1.5">${li.description}</td><td>${li.quantity}</td><td>${li.unit_price}</td><td>${li.amount}</td>
-            <td>${c.pass?'✅':`<span class="text-rose-400">❌ expected ${c.expected}</span>`}</td></tr>`;}).join('')}
+          return `<tr class="border-b border-slate-800/50"><td class="py-2">${li.description}</td><td>${li.quantity}</td><td>${li.unit_price}</td><td>${li.amount}</td>
+            <td>${c.pass?'<span class="text-emerald-400 font-bold">✅ PASS</span>':`<span class="text-rose-400 font-bold">❌ FAIL (Expected ${c.expected})</span>`}</td></tr>`;}).join('')}
         </tbody>
       </table>
-      <div class="text-xs p-2 rounded-lg ${grand.pass?'bg-emerald-900/30 text-emerald-300':'bg-rose-900/30 text-rose-300'}">
-        Grand total: Σ items ${grand.items_sum} + tax ${grand.tax} = <b>${grand.expected}</b> vs stated <b>${grand.stated}</b>
-        ${grand.pass?'✓ exact match':`✗ discrepancy ${grand.discrepancy} — flagged`}
+
+      <div class="text-xs font-mono p-3.5 rounded-xl ${grand.pass?'bg-emerald-950/60 border border-emerald-800/60 text-emerald-300':'bg-rose-950/60 border border-rose-800/60 text-rose-300'}">
+        Grand Total Σ: Items ${grand.items_sum} + Tax ${grand.tax} = <b>${grand.expected}</b> vs Stated <b>${grand.stated}</b>
+        <div class="mt-1 font-bold">${grand.pass?'✓ Exact mathematical verification match':`✗ Discrepancy detected: ${grand.discrepancy} — Flagged for manual review`}</div>
       </div>
-      <div class="text-xs text-slate-500 mt-2">Routing reasons: ${d.routing.reasons.join(', ')}</div>
+      <div class="text-xs text-slate-500 font-mono">Routing Reasons: ${d.routing.reasons.join(', ')}</div>
     </div>`;
 }
 
@@ -272,14 +210,14 @@ function toggleJson(){ document.getElementById('rawJson').classList.toggle('hidd
 async function loadQueue(){
   const data = await (await fetch(API+'/api/documents?status=NEEDS_REVIEW')).json();
   const el = document.getElementById('queue');
-  if(!data.count){ el.innerHTML='Empty — submit the mismatched sample to populate it.'; return; }
+  if(!data.count){ el.innerHTML='Empty — submit the mismatched sample invoice to populate this review queue.'; return; }
   el.innerHTML = data.documents.map(d=>`
-    <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-700/60 py-2 fade-in">
-      <div class="text-xs"><b class="text-white">${d.invoice.invoice_number}</b> · ${d.invoice.vendor}
-        <span class="text-rose-400 ml-1">${d.routing.reasons.join(', ')}</span></div>
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 py-3 fade-in font-mono text-xs">
+      <div><b class="text-white">${d.invoice.invoice_number}</b> &bull; ${d.invoice.vendor}
+        <span class="text-rose-400 ml-2">(${d.routing.reasons.join(', ')})</span></div>
       <div class="flex gap-2">
-        <button onclick="review('${d.id}','approve')" class="px-3 py-1 text-xs rounded bg-emerald-600 hover:bg-emerald-500 text-white">Approve</button>
-        <button onclick="review('${d.id}','reject')" class="px-3 py-1 text-xs rounded bg-rose-600 hover:bg-rose-500 text-white">Reject</button>
+        <button onclick="review('${d.id}','approve')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">Approve Invoice</button>
+        <button onclick="review('${d.id}','reject')" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition">Reject Invoice</button>
       </div>
     </div>`).join('');
 }
@@ -291,16 +229,17 @@ async function loadStats(silent){
   const s = await (await fetch(API+'/api/stats')).json();
   const el = document.getElementById('stats');
   el.classList.remove('hidden');
-  el.innerHTML = `<h2 class="font-semibold text-white mb-3">📈 Pipeline telemetry</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-      ${metric('Documents processed', s.total_documents)}
-      ${metric('Auto-approval rate', s.auto_approval_rate!=null?(s.auto_approval_rate*100).toFixed(0)+'%':'—')}
-      ${metric('Σ pass rate', s.arithmetic_pass_rate!=null?(s.arithmetic_pass_rate*100).toFixed(0)+'%':'—')}
-      ${metric('Review queue depth', s.review_queue_depth)}
-    </div>`;
+  el.innerHTML = `<div class="card-panel font-mono text-xs">
+    <h2 class="font-bold text-white text-base mb-4">📈 Pipeline Telemetry</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+      ${metric('Total Processed', s.total_documents)}
+      ${metric('Auto-Approval Rate', s.auto_approval_rate!=null?(s.auto_approval_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Σ Verification Pass Rate', s.arithmetic_pass_rate!=null?(s.arithmetic_pass_rate*100).toFixed(0)+'%':'—')}
+      ${metric('Queue Depth', s.review_queue_depth)}
+    </div></div>`;
   if(!silent) el.scrollIntoView({behavior:'smooth'});
 }
-const metric=(l,v)=>`<div class="p-3 rounded-lg bg-black/30"><div class="text-2xl font-bold text-white">${v}</div><div class="text-xs text-slate-500">${l}</div></div>`;
+const metric=(l,v)=>`<div class="p-4 rounded-xl bg-slate-950 border border-slate-800"><div class="text-2xl font-bold text-white">${v}</div><div class="text-xs text-slate-500 mt-1">${l}</div></div>`;
 renderStepper(0); init();
 </script>
 </body>

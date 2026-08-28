@@ -151,7 +151,7 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 <main id="main-content" class="wrap">
 <style>:root{--accent:#b6e66e;--accent-rgb:182,230,110}</style>
 <header>
-  <div class="eyebrow"><span class="signal-dot"></span>05 / RESILIENT DATA<span class="eyebrow-rule"></span><span class="eyebrow-note">PORTFOLIO BUILD</span></div>
+  <div class="eyebrow"><span class="signal-dot"></span>RESILIENT DATA AUTOMATION<span class="eyebrow-rule"></span><span class="eyebrow-note">SELF-HEALING SCRAPER</span></div>
   <h1>SelfHeal Scraper <span class="tag" id="mode">demo</span></h1>
   <div class="sub">Price scrapers whose CSS selectors <b>repair themselves</b> when a site redesign breaks them — LLM (or deterministic heuristic) extracts the price from the changed DOM, derives a new selector, validates it, and version-bumps the registry.</div>
   <div class="links"><a href="/docs" target="_blank">API docs (Swagger)</a><a href="/api/health" target="_blank">/api/health</a><a href="/api/mock/store?layout=v1" target="_blank">mock store v1</a><a href="/api/mock/store?layout=v2" target="_blank">mock store v2 (redesigned)</a></div>
@@ -165,7 +165,7 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 <div class="grid">
 <div>
   <div class="card samples">
-    <h2>1 · Run the pipeline</h2>
+    <h2>Scraper Pipeline Execution & Redesign Triggers</h2>
     <div class="hint">Cron normally does this every 6 h. Trigger it manually:</div>
     <button onclick="scrape('v1')">Run scrape — layout v1 (selectors work → CSS fast path)</button>
     <button class="boom" onclick="scrape('v2')">Simulate site redesign — layout v2 (selectors break → self-heal)</button>
@@ -181,14 +181,14 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 
 <div>
   <div class="card">
-    <h2>2 · Pipeline</h2>
+    <h2>Self-Healing Pipeline Execution</h2>
     <div class="stepper" id="stepper">
       <span class="step">Cron / trigger</span><span class="step">CSS fast path</span><span class="step">MISS detected</span><span class="step">Self-healing</span><span class="step">Selector validated</span><span class="step">Price logged</span>
     </div>
     <div id="out" class="empty">Run layout v1, then simulate the redesign to watch the heal.</div>
   </div>
   <div class="card">
-    <h2>3 · Selector registry &amp; heal audit</h2>
+    <h2>Selector Registry & Heal Audit Log</h2>
     <div id="registry" class="empty">loading…</div>
     <div id="heals"></div>
   </div>

@@ -159,13 +159,12 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 <main id="main-content" class="wrap">
 <style>:root{--accent:#f6c76a;--accent-rgb:246,199,106}</style>
 <header>
-  <div class="eyebrow"><span class="signal-dot"></span>03 / AGENT OPERATIONS<span class="eyebrow-rule"></span><span class="eyebrow-note">PORTFOLIO BUILD</span></div>
-  <h1>DuraSupport <span class="tag">durable pause/resume workflows</span></h1>
+  <div class="eyebrow"><span class="signal-dot"></span>AGENT OPERATIONS<span class="eyebrow-rule"></span><span class="eyebrow-note">DURABLE STATE MACHINE</span></div>
+  <h1>DuraSupport Workflow <span class="tag">Durable Pause / Resume Workflows</span></h1>
   <div class="sub">AI support agent that drafts replies, then <b>pauses at human-approval gates with zero compute</b> — resumed by webhook. Sensitive intents (refund / cancellation / dispute) never auto-send.</div>
   <div class="links">
-    <a href="/api/health" target="_blank">⚙ API health</a>
+    <a href="/api/health" target="_blank">⚙ API Health</a>
     <a href="/api/tickets" target="_blank">📄 GET /api/tickets</a>
-    <a href="https://github.com" target="_blank">📘 README & architecture</a>
   </div>
 </header>
 <div class="proof-strip" aria-label="Project highlights">
@@ -177,7 +176,7 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 <div class="grid">
 <div>
   <div class="card samples">
-    <h2>1 · Try a sample ticket</h2>
+    <h2>Support Ticket Intent Probes</h2>
     <div class="hint">One click — no setup. Watch the workflow either auto-resolve or pause for approval.</div>
     <button onclick="loadSample('docs')">“Where are my API docs?” <span class="hint">→ auto-resolves</span></button>
     <button onclick="loadSample('refund')">“I want a refund — double charged” <span class="hint">→ pauses for approval</span></button>
@@ -185,29 +184,29 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
   </div>
 
   <div class="card">
-    <h2>2 · Or write your own</h2>
+    <h2>Custom Ticket Submission</h2>
     <label>Customer</label><input id="f-customer" value="Jane Doe">
     <label>Email</label><input id="f-email" value="jane@example.com">
     <label>Subject</label><input id="f-subject" placeholder="Subject">
     <label>Message</label><textarea id="f-body" placeholder="Describe the issue…"></textarea>
-    <button onclick="submitTicket()">Submit ticket →</button>
+    <button onclick="submitTicket()">Submit Ticket →</button>
     <div id="submit-msg" class="muted"></div>
   </div>
 
   <div class="card">
-    <h2>Knowledge base (retrieval corpus)</h2>
+    <h2>Knowledge Base Corpus</h2>
     <ul class="kb" id="kb-list"><li class="muted">loading…</li></ul>
   </div>
 </div>
 
 <div>
   <div class="card">
-    <h2>3 · Ticket queue <span id="queue-meta" class="muted"></span></h2>
+    <h2>Ticket Queue <span id="queue-meta" class="muted"></span></h2>
     <div id="ticket-list" class="muted">loading…</div>
   </div>
 
   <div class="card" id="detail-card" style="display:none">
-    <h2>4 · Workflow execution</h2>
+    <h2>Workflow Execution Stepper</h2>
     <div id="d-head"></div>
     <div class="stepper" id="d-stepper"></div>
     <div class="timeline" id="d-timeline"></div>

@@ -113,16 +113,16 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
   <!-- Header -->
   <style>:root{--accent:#ff9f7a;--accent-rgb:255,159,122}</style>
 <header class="mb-8">
-  <div class="eyebrow"><span class="signal-dot"></span>02 / REVENUE AUTOMATION<span class="eyebrow-rule"></span><span class="eyebrow-note">PORTFOLIO BUILD</span></div>
+  <div class="eyebrow"><span class="signal-dot"></span>REVENUE AUTOMATION<span class="eyebrow-rule"></span><span class="eyebrow-note">LEAD ENRICHMENT PIPELINE</span></div>
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div>
-        <h1 class="text-3xl font-bold text-white">LeadFlow</h1>
-        <p class="text-slate-400 mt-1">Webhook-driven lead enrichment → web research → LLM grading → Tier A/B/C dossier → Slack/CRM</p>
+        <h1 class="text-3xl font-bold text-white">LeadFlow Enrichment</h1>
+        <p class="text-slate-400 mt-1">Webhook-driven lead enrichment &bull; Tavily web research &bull; LLM grading &bull; Tier A/B/C dossier &bull; Slack/CRM</p>
       </div>
       <div class="flex gap-2 text-sm">
-        <span id="modeBadge" class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">checking…</span>
-        <a href="/api/health" target="_blank" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700">/api/health</a>
-        <a href="/api/leads" target="_blank" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700">/api/leads</a>
+        <span id="modeBadge" class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">checking…</span>
+        <a href="/api/health" target="_blank" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 font-mono">/api/health</a>
+        <a href="/api/leads" target="_blank" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 font-mono">/api/leads</a>
       </div>
     </div>
   </header>
@@ -136,19 +136,19 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
     <!-- Left: form + samples -->
     <div class="lg:col-span-2 space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <h2 class="font-semibold text-white mb-3">1 · Simulate inbound lead webhook</h2>
+        <h2 class="font-semibold text-white mb-3">Inbound Lead Webhook Intake</h2>
         <div class="grid grid-cols-1 gap-2 mb-4">
-          <button onclick="loadSample('enterprise')" class="text-left px-4 py-3 rounded-lg bg-emerald-600/10 border border-emerald-600/30 hover:bg-emerald-600/20">
-            <div class="font-medium text-emerald-300">Enterprise lead (expect Tier A)</div>
-            <div class="text-xs text-slate-400">dana.whitfield@stripe.com · $120k budget · "pilot ASAP"</div>
+          <button onclick="loadSample('enterprise')" class="text-left px-4 py-3 rounded-lg bg-emerald-600/20 border border-emerald-600/40 hover:bg-emerald-600/30">
+            <div class="font-bold text-emerald-300">Enterprise Lead (Expect Tier A)</div>
+            <div class="text-xs text-slate-300">dana.whitfield@stripe.com · $120k budget · "pilot ASAP"</div>
           </button>
-          <button onclick="loadSample('midmarket')" class="text-left px-4 py-3 rounded-lg bg-sky-600/10 border border-sky-600/30 hover:bg-sky-600/20">
-            <div class="font-medium text-sky-300">Mid-market lead (expect Tier B)</div>
-            <div class="text-xs text-slate-400">leo@notion.so · $15k budget · "curious"</div>
+          <button onclick="loadSample('midmarket')" class="text-left px-4 py-3 rounded-lg bg-sky-600/20 border border-sky-600/40 hover:bg-sky-600/30">
+            <div class="font-bold text-sky-300">Mid-market Lead (Expect Tier B)</div>
+            <div class="text-xs text-slate-300">leo@notion.so · $15k budget · "curious"</div>
           </button>
-          <button onclick="loadSample('smallbiz')" class="text-left px-4 py-3 rounded-lg bg-rose-600/10 border border-rose-600/30 hover:bg-rose-600/20">
-            <div class="font-medium text-rose-300">Free-mail lead (expect Tier C)</div>
-            <div class="text-xs text-slate-400">bob.miller@gmail.com · $500 budget · "price?"</div>
+          <button onclick="loadSample('smallbiz')" class="text-left px-4 py-3 rounded-lg bg-rose-600/20 border border-rose-600/40 hover:bg-rose-600/30">
+            <div class="font-bold text-rose-300">Free-mail Lead (Expect Tier C)</div>
+            <div class="text-xs text-slate-300">bob.miller@gmail.com · $500 budget · "price?"</div>
           </button>
         </div>
         <form id="leadForm" class="space-y-2" onsubmit="return submitLead(event)">
@@ -157,13 +157,13 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
           <input id="f_company" placeholder="Company" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
           <input id="f_budget" type="number" placeholder="Budget (USD)" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
           <textarea id="f_message" placeholder="Message" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm"></textarea>
-          <button id="submitBtn" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-semibold text-white">Send webhook →</button>
+          <button id="submitBtn" class="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-white shadow-lg shadow-indigo-600/30">Send Webhook Payload →</button>
         </form>
       </div>
 
       <!-- Stepper -->
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <h2 class="font-semibold text-white mb-3">2 · Pipeline execution</h2>
+        <h2 class="font-semibold text-white mb-3">Enrichment Pipeline Execution</h2>
         <ol id="stepper" class="space-y-2 text-sm"></ol>
       </div>
     </div>
@@ -171,13 +171,13 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
     <!-- Right: dossier + CRM -->
     <div class="lg:col-span-3 space-y-4">
       <div id="dossierWrap" class="bg-slate-900 border border-slate-800 rounded-xl p-5 min-h-[280px]">
-        <h2 class="font-semibold text-white mb-3">3 · Lead dossier</h2>
+        <h2 class="font-semibold text-white mb-3">Enriched Lead Dossier</h2>
         <div id="dossier" class="text-slate-500 text-sm">Trigger a sample lead to see the enrichment dossier.</div>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="font-semibold text-white">4 · CRM — all leads</h2>
+          <h2 class="font-semibold text-white">CRM Lead Registry</h2>
           <button onclick="loadCrm()" class="text-xs px-3 py-1 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700">↻ refresh</button>
         </div>
         <div class="overflow-x-auto">
