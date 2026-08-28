@@ -1,309 +1,587 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Automation Engineer — Master Portfolio Launchpad</title>
+<title>AI Automation Engineer & Solutions Architect — Master Portfolio</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Geist', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          brand: {
+            bg: '#05070c',
+            surface: '#0b0f19',
+            inner: '#111726',
+            border: 'rgba(255, 255, 255, 0.08)',
+            accent: '#6366f1',
+            accentGlow: 'rgba(99, 102, 241, 0.15)',
+            emerald: '#10b981',
+            amber: '#f59e0b',
+            rose: '#f43f5e',
+            sky: '#0ea5e9',
+          }
+        },
+        boxShadow: {
+          'bezel': 'inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 20px 40px -15px rgba(0, 0, 0, 0.5)',
+          'glow-emerald': '0 0 30px -5px rgba(16, 185, 129, 0.25)',
+          'glow-indigo': '0 0 30px -5px rgba(99, 102, 241, 0.25)',
+          'glow-sky': '0 0 30px -5px rgba(14, 165, 233, 0.25)',
+        }
+      }
+    }
+  }
+</script>
 <style>
-  body { background-color: #07090e; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-  .font-mono { font-family: 'JetBrains Mono', monospace; }
-  .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-  .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); transform: translateY(-2px); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-  .glow-purple { box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.15); }
-  .gradient-text { background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  body { background-color: #05070c; color: #f1f5f9; font-family: 'Geist', sans-serif; overflow-x: hidden; }
+  
+  /* Doppelrand Double-Bezel Architecture */
+  .doppelrand-shell {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 2rem;
+    padding: 0.5rem;
+    transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .doppelrand-shell:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px -10px rgba(99, 102, 241, 0.2);
+  }
+  .doppelrand-core {
+    background: #0d121f;
+    border-radius: calc(2rem - 0.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  }
+
+  /* Button-in-Button Architecture */
+  .btn-doppel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.625rem 0.625rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .btn-doppel .icon-circle {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .btn-doppel:hover .icon-circle {
+    transform: translateX(3px) scale(1.05);
+  }
+  .btn-doppel:active {
+    transform: scale(0.97);
+  }
+
+  /* Kinetic Stagger Entrance */
+  .stagger-in {
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shimmer Animation */
+  .shimmer-badge {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.03) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
 </style>
 </head>
-<body class="min-h-screen pb-16">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12">
-    
-    <!-- Hero Header -->
-    <header class="glass-card rounded-2xl p-8 mb-10 glow-purple relative overflow-hidden">
-      <div class="absolute -right-10 -top-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl"></div>
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-        <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-3">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Available for AI Automation Roles & Retainers
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            AI Automation Engineer & <span class="gradient-text">Solutions Architect</span>
-          </h1>
-          <p class="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl">
-            Specializing in revenue-impacting workflows, n8n/Make low-code integrations, exact Decimal financial verification, durable state-machine support engines, and AST security guardrails.
-          </p>
+<body class="min-h-[100dvh] antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Ambient Background Mesh -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-sky-600/10 rounded-full blur-[140px]"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Top Navigation Island -->
+    <nav class="flex items-center justify-between mb-12 py-3 px-6 rounded-full glass-card border border-white/10 shadow-2xl backdrop-blur-xl">
+      <div class="flex items-center gap-3">
+        <div class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
         </div>
-        
-        <div class="flex flex-wrap sm:flex-col gap-3 w-full md:w-auto">
-          <a href="#" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold text-center transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25">
-            📄 View Resume
-          </a>
-          <a href="https://linkedin.com" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium text-center border border-slate-700 transition flex items-center justify-center gap-2">
-            💼 LinkedIn Profile
-          </a>
-        </div>
+        <span class="text-xs font-mono font-semibold tracking-wide text-slate-200 uppercase">
+          AI AUTOMATION ENGINEER
+        </span>
       </div>
 
-      <!-- Certifications Badge Strip -->
-      <div class="mt-8 pt-6 border-t border-slate-800/80 flex flex-wrap items-center gap-3 text-xs">
-        <span class="text-slate-500 uppercase font-semibold tracking-wider text-[10px]">Verified Credentials:</span>
-        <span class="px-3 py-1 rounded-lg bg-slate-800/90 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 font-medium">
-          🎓 Prompt Engineering — Vanderbilt University
+      <div class="flex items-center gap-4 text-xs font-medium">
+        <span class="hidden md:inline-flex items-center gap-1.5 text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-3 py-1 rounded-full font-mono">
+          ⚡ Multi-LLM Failover Active (Groq · NVIDIA NIM · Mistral · Gemini)
         </span>
-        <span class="px-3 py-1 rounded-lg bg-slate-800/90 text-sky-300 border border-sky-500/30 flex items-center gap-1.5 font-medium">
-          🎓 AI & Machine Learning Specialization — Google
-        </span>
-        <span class="px-3 py-1 rounded-lg bg-slate-800/90 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 font-medium">
-          🎓 Workflow Automation Professional — IBM
-        </span>
+        <a href="#projects" class="text-slate-300 hover:text-white transition">Projects</a>
+        <a href="#credentials" class="text-slate-300 hover:text-white transition">Credentials</a>
+      </div>
+    </nav>
+
+    <!-- Hero Header (Double-Bezel Shell) -->
+    <header class="doppelrand-shell mb-16 stagger-in" style="animation-delay: 100ms;">
+      <div class="doppelrand-core p-8 sm:p-12 relative overflow-hidden">
+        
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative z-10">
+          <div class="max-w-3xl">
+            
+            <!-- Eyebrow Tag -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono uppercase tracking-widest mb-6 font-semibold">
+              <span>🚀 7 Live Enterprise Automations Deployed</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.08] mb-6">
+              Building Resilient <br class="hidden sm:inline"/>
+              <span class="bg-gradient-to-r from-indigo-300 via-indigo-400 to-sky-400 bg-clip-text text-transparent">
+                AI Workflows & Safety Systems
+              </span>
+            </h1>
+
+            <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl font-light">
+              Specialized in production AI automations: Low-Code/n8n webhooks, exact <code class="text-emerald-300 font-mono text-sm bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/50">Decimal</code> financial verification, AST text-to-SQL security guardrails, self-healing scrapers, and MCP tool gateways.
+            </p>
+
+            <!-- CTA Button Architecture -->
+            <div class="flex flex-wrap items-center gap-4">
+              <a href="https://linkedin.com" target="_blank" class="btn-doppel bg-indigo-600 hover:bg-indigo-500 text-white shadow-glow-indigo">
+                <span>💼 Connect on LinkedIn</span>
+                <span class="icon-circle bg-white/20">↗</span>
+              </a>
+
+              <a href="file:///home/dev/.gemini/antigravity/brain/4c5ef7c8-8bec-4f23-802f-3b1b13b4f84b/resume_and_linkedin.md" target="_blank" class="btn-doppel bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
+                <span>📄 View Resume Copy</span>
+                <span class="icon-circle bg-slate-700 text-slate-300">↓</span>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- Quick Metrics Card -->
+          <div class="w-full lg:w-80 bg-slate-950/80 border border-white/10 rounded-2xl p-6 font-mono text-xs space-y-4">
+            <div class="text-slate-400 uppercase tracking-widest text-[10px] font-bold border-b border-slate-800 pb-2">
+              System Architecture
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400">Deployed Microservices</span>
+              <span class="text-emerald-400 font-bold text-sm">8 / 8 Live</span>
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400">LLM Failover Tiers</span>
+              <span class="text-indigo-400 font-bold text-sm">4 Providers</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400">Vercel Infra Cost</span>
+              <span class="text-sky-400 font-bold text-sm">$0 / mo</span>
+            </div>
+
+            <div class="pt-2 text-[10px] text-slate-500 border-t border-slate-800/80">
+              Groq &bull; NVIDIA NIM &bull; Mistral &bull; Gemini
+            </div>
+          </div>
+        </div>
+
+        <!-- Credentials Badge Strip -->
+        <div id="credentials" class="mt-10 pt-8 border-t border-slate-800/80 flex flex-wrap items-center gap-4 text-xs">
+          <span class="text-slate-400 font-mono uppercase font-bold text-[11px] tracking-wider">
+            Verified Credentials:
+          </span>
+          
+          <div class="px-4 py-2 rounded-xl bg-slate-900/90 text-indigo-300 border border-indigo-500/30 flex items-center gap-2 font-medium shadow-sm">
+            <span class="text-base">🎓</span> Prompt Engineering — Vanderbilt University
+          </div>
+
+          <div class="px-4 py-2 rounded-xl bg-slate-900/90 text-sky-300 border border-sky-500/30 flex items-center gap-2 font-medium shadow-sm">
+            <span class="text-base">🎓</span> AI & Machine Learning Specialization — Google
+          </div>
+
+          <div class="px-4 py-2 rounded-xl bg-slate-900/90 text-emerald-300 border border-emerald-500/30 flex items-center gap-2 font-medium shadow-sm">
+            <span class="text-base">🎓</span> Workflow Automation Professional — IBM
+          </div>
+        </div>
+
       </div>
     </header>
 
-    <!-- Project Section Title -->
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="text-xl font-bold text-white tracking-tight">Enterprise Portfolio Projects</h2>
-        <p class="text-xs text-slate-400 mt-0.5">7 production-grade serverless apps • Zero-key demo mode ready</p>
-      </div>
-      <span class="text-xs font-mono text-indigo-400 bg-indigo-950/60 border border-indigo-800/50 px-3 py-1.5 rounded-lg">
-        7 / 7 Apps Live on Vercel
-      </span>
-    </div>
-
-    <!-- Project Cards Grid -->
-    <div class="grid md:grid-cols-2 gap-6">
-
-      <!-- P1: FinAudit IDP -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+    <!-- Projects Grid Section -->
+    <section id="projects" class="mb-16">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded">
-                Finance / Intelligent Extraction
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🧾 FinAudit IDP</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            FastAPI invoice extraction engine using Gemini Vision and exact Python <code class="text-indigo-300 font-mono text-[11px]">Decimal</code> arithmetic. Re-verifies line items and grand totals, routing discrepancies & low confidence to a human review queue.
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Production Automation Projects
+          </h2>
+          <p class="text-slate-400 text-sm mt-1">
+            Click any card to launch the live zero-key interactive microservice on Vercel.
           </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">FastAPI</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Gemini Vision</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Pydantic v2</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Exact Math</span>
-          </div>
         </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://01-finaudit-idp.vercel.app" target="_blank" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P1</span>
+        
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Zero-Key Demo Modes Enabled</span>
         </div>
       </div>
 
-      <!-- P2: LeadFlow -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+      <!-- Bento Grid (Asymmetrical 2-Column Layout) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- P1: FinAudit IDP -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 200ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 bg-sky-950/80 border border-sky-800/60 px-2 py-0.5 rounded">
-                Sales / GTM Automation
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🎯 LeadFlow Enrichment</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Webhook-driven inbound sales lead enrichment pipeline. Researches lead domains via Tavily search, computes ICP scores via Llama 3 on Groq, and generates Tier A/B/C dossiers synced to Slack & CRM.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Serverless JS</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Groq Llama 3</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Tavily Web Search</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Slack Webhook</span>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://02-leadflow-enrichment.vercel.app" target="_blank" class="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P2</span>
-        </div>
-      </div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2.5 py-1 rounded-md">
+                  Finance / Intelligent Document Processing
+                </span>
+                <span class="text-[11px] font-mono text-emerald-300 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  P1 • Verified Live
+                </span>
+              </div>
 
-      <!-- P3: DuraSupport -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+              <h3 class="text-xl font-bold text-white mb-2">🧾 FinAudit IDP</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                FastAPI intelligent document extraction service using Gemini Vision & multi-LLM failover. Re-verifies invoice math using exact Python <code class="text-indigo-300 font-mono">Decimal</code> arithmetic, automatically routing discrepancies & low confidence extractions to a human review queue.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-indigo-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  Mathematical Σ-verification (re-multiplies quantity × unit_price and sums tax) prevents floating-point accounting errors from reaching enterprise ledgers.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">FastAPI</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Gemini Vision</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Pydantic v2</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Decimal Math</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Human Queue</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://01-finaudit-idp.vercel.app" target="_blank" class="btn-doppel bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs">
+                <span>Launch FinAudit Demo</span>
+                <span class="icon-circle bg-emerald-500/20 text-emerald-300">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- P2: LeadFlow Enrichment -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 250ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-amber-400 bg-amber-950/80 border border-amber-800/60 px-2 py-0.5 rounded">
-                Customer Ops / State Machines
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">⏸️ DuraSupport Workflow</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Durable pause/resume customer support state machine. Auto-resolves routine requests using vector KB retrieval while pausing high-risk intents (refunds, cancellations) at human manager approval gates with zero compute.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Durable Workflows</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Human Approval</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Vector KB</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">409 Idempotency</span>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://03-durable-support.vercel.app" target="_blank" class="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P3</span>
-        </div>
-      </div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-400 bg-sky-950/80 border border-sky-800/60 px-2.5 py-1 rounded-md">
+                  Sales / Autonomous Research
+                </span>
+                <span class="text-[11px] font-mono text-sky-300 font-bold bg-sky-500/10 border border-sky-500/20 px-2.5 py-1 rounded-full">
+                  P2 • Verified Live
+                </span>
+              </div>
 
-      <!-- P4: ZeroTrust-SQL -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+              <h3 class="text-xl font-bold text-white mb-2">🎯 LeadFlow Enrichment</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                Autonomous B2B inbound lead qualification pipeline. Triggers on inbound webhooks, performs web research via Tavily API, scores lead ICP fit using Groq/NVIDIA/Mistral LLM failover, and pushes Tier A/B/C dossiers to Slack & CRM.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-sky-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  Automated web research → LLM ICP scoring pipeline generates detailed talking points & firmographic dossiers for sales reps in under 2 seconds.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Serverless JS</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Tavily Web Search</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Groq Llama 3</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">ICP Scoring</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Slack Webhook</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://02-leadflow-enrichment.vercel.app" target="_blank" class="btn-doppel bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/40 text-xs">
+                <span>Launch LeadFlow Demo</span>
+                <span class="icon-circle bg-sky-500/20 text-sky-300">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- P3: DuraSupport -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 300ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-rose-400 bg-rose-950/80 border border-rose-800/60 px-2 py-0.5 rounded">
-                Data Security / MLOps
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🛡️ ZeroTrust-SQL Guard</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Natural language analytics agent with <code class="text-rose-300 font-mono text-[11px]">sqlglot</code> AST guardrails. Blocks DROP, DELETE, UPDATE statements, multi-statement injection vectors, and non-whitelisted tables before execution on read-only SQLite.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">FastAPI</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">sqlglot AST</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Read-Only Connection</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Audit Logging</span>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://04-zerotrust-sql.vercel.app" target="_blank" class="text-xs font-semibold text-rose-400 hover:text-rose-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P4</span>
-        </div>
-      </div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-950/80 border border-amber-800/60 px-2.5 py-1 rounded-md">
+                  Customer Ops / Durable State Machine
+                </span>
+                <span class="text-[11px] font-mono text-amber-300 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                  P3 • Verified Live
+                </span>
+              </div>
 
-      <!-- P5: SelfHeal Scraper -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+              <h3 class="text-xl font-bold text-white mb-2">⏸️ DuraSupport Engine</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                Durable multi-agent support workflow with human approval gates. Auto-resolves routine requests using vector KB retrieval, while pausing sensitive intents (refunds, cancellations) for manager Slack approval with zero background compute.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-amber-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  State machine workflow pauses execution at approval gates with zero compute cost, resuming via webhook with full 409 idempotency guards.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">State Machine</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Approval Gates</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Vector KB</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">409 Idempotency</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://03-durable-support.vercel.app" target="_blank" class="btn-doppel bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs">
+                <span>Launch DuraSupport Demo</span>
+                <span class="icon-circle bg-amber-500/20 text-amber-300">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- P4: ZeroTrust-SQL -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 350ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-purple-400 bg-purple-950/80 border border-purple-800/60 px-2 py-0.5 rounded">
-                Data / Web Automation
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🩹 SelfHeal Price Scraper</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            E-commerce price monitoring engine featuring CSS fast-path extraction and an LLM self-healing loop. Automatically repairs broken CSS selectors upon site redesign, version-bumps the selector registry, and alerts on price drops.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">FastAPI</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">BeautifulSoup</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">LLM Selector Repair</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Vercel Cron</span>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://05-selfheal-scraper.vercel.app" target="_blank" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P5</span>
-        </div>
-      </div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-rose-400 bg-rose-950/80 border border-rose-800/60 px-2.5 py-1 rounded-md">
+                  Data Security / MLOps
+                </span>
+                <span class="text-[11px] font-mono text-rose-300 font-bold bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-full">
+                  P4 • Verified Live
+                </span>
+              </div>
 
-      <!-- P6: ModGuard -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+              <h3 class="text-xl font-bold text-white mb-2">🛡️ ZeroTrust-SQL Guard</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                Natural-language text-to-SQL analytics agent featuring an <code class="text-rose-300 font-mono">sqlglot</code> Abstract Syntax Tree (AST) safety interceptor. Inspects SQL tree nodes to block `DROP`, `DELETE`, `UPDATE`, table probes, and prompt injections before querying read-only SQLite.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-rose-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  AST token walking parses queries semantically—defeating comment obfuscation tricks (`SELECT * FROM orders /* harmless */; DROP TABLE--`) that trick simple regex filters.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">FastAPI</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">sqlglot AST</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Read-Only SQLite</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Mistral Codestral</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://04-zerotrust-sql.vercel.app" target="_blank" class="btn-doppel bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs">
+                <span>Launch ZeroTrust-SQL Demo</span>
+                <span class="icon-circle bg-rose-500/20 text-rose-300">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- P5: SelfHeal Scraper -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 400ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-teal-400 bg-teal-950/80 border border-teal-800/60 px-2 py-0.5 rounded">
-                Platform Ops / Moderation
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🛡️ ModGuard Safety</h3>
-            </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Multi-tier trust & safety content moderation engine. Features a <code class="text-teal-300 font-mono text-[11px]">&lt;5ms sha256 verdict cache</code> fast-path layered over regex phrase normalization and Gemini Flash multimodal toxicity analysis.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">sha256 LRU Cache</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Regex Lexicon</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Gemini Flash</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Incident Telemetry</span>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://06-modguard-moderation.vercel.app" target="_blank" class="text-xs font-semibold text-teal-400 hover:text-teal-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P6</span>
-        </div>
-      </div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-purple-400 bg-purple-950/80 border border-purple-800/60 px-2.5 py-1 rounded-md">
+                  Data Automation / Resilience
+                </span>
+                <span class="text-[11px] font-mono text-purple-300 font-bold bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full">
+                  P5 • Verified Live
+                </span>
+              </div>
 
-      <!-- P7: MCP Gateway -->
-      <div class="glass-card rounded-xl p-6 flex flex-col justify-between md:col-span-2">
-        <div>
-          <div class="flex items-start justify-between gap-3 mb-3">
+              <h3 class="text-xl font-bold text-white mb-2">🩹 SelfHeal Scraper</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                Autonomous price monitoring scraper with LLM selector repair. Fast-path CSS extraction operates at `<5ms`. On site redesign (CSS MISS), an AI self-healing loop derives new selectors, validates them against live DOM, version-bumps the registry, and alerts on price drops.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-purple-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  Automated selector derivation & DOM scope matching repairs broken scrapers on layout changes without human engineer maintenance.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">FastAPI</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">BeautifulSoup</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">LLM Self-Heal</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Registry Versioning</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://05-selfheal-scraper.vercel.app" target="_blank" class="btn-doppel bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/40 text-xs">
+                <span>Launch SelfHeal Scraper Demo</span>
+                <span class="icon-circle bg-purple-500/20 text-purple-300">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- P6: ModGuard Safety -->
+        <div class="doppelrand-shell stagger-in" style="animation-delay: 450ms;">
+          <div class="doppelrand-core p-7 flex flex-col justify-between h-full">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-400 bg-indigo-950/80 border border-indigo-800/60 px-2 py-0.5 rounded">
-                AI Infra / Protocol Gateway
-              </span>
-              <h3 class="text-lg font-bold text-white mt-1.5">🔌 Model Context Protocol (MCP) Gateway</h3>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-teal-400 bg-teal-950/80 border border-teal-800/60 px-2.5 py-1 rounded-md">
+                  Platform Ops / Safety Gateway
+                </span>
+                <span class="text-[11px] font-mono text-teal-300 font-bold bg-teal-500/10 border border-teal-500/20 px-2.5 py-1 rounded-full">
+                  P6 • Verified Live
+                </span>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-2">🛡️ ModGuard Safety</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-5 font-light">
+                Layered Trust & Safety content moderation gateway. Features a `<5ms sha256 verdict cache` fast-path layered over normalized phrase lexicons and Gemini/NVIDIA Flash toxicity analysis, complete with incident logging.
+              </p>
+
+              <!-- Architecture Highlights -->
+              <div class="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 text-xs space-y-1.5">
+                <div class="text-teal-300 font-mono font-semibold text-[11px]">Extraordinary Signal:</div>
+                <div class="text-slate-400 text-[11px] leading-relaxed">
+                  Text normalization (collapsing punctuation & whitespace) prevents evasion tricks (`C.o.n.g.r.a.t.u.l.a.t.i.o.n.s`) from bypassing phrase detectors.
+                </div>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">sha256 Cache</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Normalized Lexicon</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Gemini Flash</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Incident Audit</span>
+              </div>
             </div>
-            <span class="px-2 py-1 text-[11px] rounded bg-emerald-500/10 text-emerald-300 font-semibold border border-emerald-500/20">
-              Live Demo Ready
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            JSON-RPC 2.0 tool host compliant with the MCP 2024-11-05 spec. Implements API-key scope authorization, per-key token bucket rate limiting (429 handling), live trace logging, and instant connection capabilities for Claude Desktop & Cursor.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-5 text-[11px] font-mono text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">JSON-RPC 2.0</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">MCP Spec 2024-11-05</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Token Bucket Rate Limiter</span>
-            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Claude/Cursor Ready</span>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://06-modguard-moderation.vercel.app" target="_blank" class="btn-doppel bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/40 text-xs">
+                <span>Launch ModGuard Demo</span>
+                <span class="icon-circle bg-teal-500/20 text-teal-300">↗</span>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <a href="https://07-mcp-gateway.vercel.app" target="_blank" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-            ▶️ Launch App Demo &rarr;
-          </a>
-          <span class="text-[11px] text-slate-500 font-mono">P7</span>
+
+        <!-- P7: MCP Gateway (Full Width Featured Card) -->
+        <div class="doppelrand-shell md:col-span-2 stagger-in" style="animation-delay: 500ms;">
+          <div class="doppelrand-core p-8 flex flex-col justify-between h-full">
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-indigo-400 bg-indigo-950/80 border border-indigo-800/60 px-2.5 py-1 rounded-md">
+                  AI Infrastructure / Protocol Tooling
+                </span>
+                <span class="text-[11px] font-mono text-indigo-300 font-bold bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full">
+                  P7 • Verified Live
+                </span>
+              </div>
+
+              <h3 class="text-2xl font-bold text-white mb-2">🔌 Model Context Protocol (MCP) Gateway</h3>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6 font-light max-w-3xl">
+                Enterprise JSON-RPC 2.0 tool gateway compliant with the official MCP 2024-11-05 specification. Features API-key scope authorization (`read` vs `write`), per-key token-bucket rate limiting (429 handling with Retry-After), live telemetry tracing, and instant connection configs for Claude Desktop & Cursor.
+              </p>
+
+              <div class="grid sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                  <div class="text-indigo-400 font-bold mb-1">Protocol Spec</div>
+                  <div class="text-slate-400 text-[11px]">JSON-RPC 2.0 (MCP 2024-11-05)</div>
+                </div>
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                  <div class="text-emerald-400 font-bold mb-1">Rate Limiting</div>
+                  <div class="text-slate-400 text-[11px]">Token Bucket (-32029 / HTTP 429)</div>
+                </div>
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                  <div class="text-sky-400 font-bold mb-1">Authorization</div>
+                  <div class="text-slate-400 text-[11px]">Scoped Keys (-32003 / 401)</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-400 mb-6">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">MCP Protocol</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">JSON-RPC 2.0</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Token Bucket</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Claude Desktop Ready</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">Cursor Integration</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <a href="https://07-mcp-gateway.vercel.app" target="_blank" class="btn-doppel bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs">
+                <span>Launch MCP Gateway Playground</span>
+                <span class="icon-circle bg-indigo-500/20 text-indigo-300">↗</span>
+              </a>
+            </div>
+          </div>
         </div>
+
       </div>
+    </section>
 
-    </div>
-
-    <footer class="mt-12 text-center text-xs text-slate-500 border-t border-slate-800/80 pt-8">
-      Designed for enterprise AI Automation Engineering roles • Pre-configured for $0 Vercel Serverless Deployment
+    <!-- Footer -->
+    <footer class="mt-20 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-8 font-mono">
+      Designed for Enterprise AI Automation Engineering • Deployed on Vercel Serverless Infrastructure
     </footer>
 
   </div>
+
 </body>
 </html>
