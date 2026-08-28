@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ModGuard — Layered AI Content Moderation with a &lt;50ms Cached Fast Path</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23090b0f%22/%3E%3Cpath%20d%3D%22M8%2021.5%2013.5%2010.5%2019%2021.5%22%20stroke%3D%22%23ff817d%22%20stroke-width%3D%222.4%22%20fill%3D%22none%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2211%22%20r%3D%222.6%22%20fill%3D%22%23ff817d%22/%3E%3C/svg%3E">
 <style>
 :root{--bg:#0b1020;--panel:#131a2e;--panel2:#1a2340;--line:#26304f;--text:#e6ebff;--dim:#8b96b8;--acc:#6d8bff;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5d6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -156,6 +157,95 @@ footer{padding:28px 0 0!important;border-top:1px solid var(--hairline);color:var
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
+/* --- Typographic status markers (replaces emoji glyphs) --- */
+.step-mark{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex:0 0 18px;border-radius:50%;font-size:10px;line-height:1;font-weight:800}
+.mark-done{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:rgba(112,225,178,.16);color:var(--success);font-size:10px;font-weight:800}
+.mark-idle{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--hairline);color:var(--faint);font-size:12px}
+.tick-ok{display:inline-flex;align-items:center;gap:5px;color:var(--success);font:600 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.tick-ok::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--success)}
+.tick-bad{display:inline-flex;align-items:center;gap:5px;color:var(--danger);font:600 11px/1 var(--mono);letter-spacing:.02em}
+.tick-bad::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--danger)}
+.bullet-line{position:relative;padding-left:15px}
+.bullet-line::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:1px;background:rgba(var(--accent-rgb),.75)}
+.action-label,.alert-label,.heal-label{display:inline-block;margin-right:8px;padding:2px 7px;border:1px solid rgba(var(--accent-rgb),.32);border-radius:5px;background:rgba(var(--accent-rgb),.09);color:var(--accent);font:700 9.5px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;vertical-align:1px}
+.alert-label{border-color:rgba(255,129,125,.36);background:rgba(255,129,125,.1);color:var(--danger)}
+.heal-label{border-color:rgba(112,225,178,.34);background:rgba(112,225,178,.1);color:var(--success)}
+
+/* ============ Rendering-defect fixes (verified via headless screenshots) ============ */
+/* 1. body.project-shell>* set position:relative on every child, which defeated
+   .skip-link's position:fixed and left it permanently visible on screen. */
+.skip-link{position:fixed!important}
+/* 2. header>div:last-child:not(:first-child) was intended for the link row, but on
+   pages whose last header child is the subtitle it turned the prose into a
+   right-aligned flex container (text fragments became flex items). */
+header>div:last-child:not(:first-child).sub,
+header .sub{display:block!important;justify-content:flex-start!important;text-align:left!important}
+header .sub em{font-style:italic;color:var(--ink)}
+/* 3. The blanket `button{background:var(--accent)!important}` repainted every semantic
+   sample button the same accent colour, and flattened nested labels (dark accent
+   text on accent fill = unreadable). Restore semantic intent. */
+button[class*="bg-emerald"],button[class*="bg-green"]{
+  background:rgba(112,225,178,.12)!important;border-color:rgba(112,225,178,.32)!important;color:#92eac5!important}
+button[class*="bg-rose"],button[class*="bg-red"]{
+  background:rgba(255,129,125,.12)!important;border-color:rgba(255,129,125,.3)!important;color:#ffaaa7!important}
+button[class*="bg-amber"],button[class*="bg-yellow"],button[class*="bg-orange"]{
+  background:rgba(246,199,106,.13)!important;border-color:rgba(246,199,106,.32)!important;color:#f8d98f!important}
+button[class*="bg-sky"],button[class*="bg-indigo"],button[class*="bg-blue"],button[class*="bg-violet"]{
+  background:rgba(var(--accent-rgb),.13)!important;border-color:rgba(var(--accent-rgb),.34)!important;color:var(--accent)!important}
+button[class*="bg-slate"],button[class*="bg-gray"],button[class*="bg-zinc"]{
+  background:rgba(255,255,255,.045)!important;border-color:var(--hairline)!important;color:#d7dce3!important}
+button[class*="bg-emerald"]:hover,button[class*="bg-rose"]:hover,button[class*="bg-amber"]:hover,
+button[class*="bg-sky"]:hover,button[class*="bg-indigo"]:hover,button[class*="bg-slate"]:hover{
+  filter:brightness(1.14)!important}
+/* 3b. Multi-line "sample card" buttons: the 12px/700 button font crushed their
+   nested title + description rows. */
+button:has(div){display:block!important;width:100%;text-align:left!important;
+  padding:12px 14px!important;font:600 13px/1.45 var(--sans)!important}
+button:has(div)>div:first-child{font-weight:650;letter-spacing:-.005em}
+button:has(div)>div+div{margin-top:3px;opacity:.82;font-size:11.5px;font-weight:500}
+/* 3c. Primary submit buttons inside forms keep the accent fill, but full-width
+   Tailwind submits were losing their emphasis to the neutral overrides. */
+button[class*="w-full"]:not([class*="bg-slate"]):not(:has(div)){
+  background:rgba(var(--accent-rgb),.16)!important;border-color:rgba(var(--accent-rgb),.4)!important;
+  color:var(--accent)!important;font-weight:700!important}
+/* 4. Header actions mixed <a> (ghost) and <button> (accent fill) side by side, so
+   one control in the same row looked like a different component. */
+header button,.links button{
+  min-height:38px!important;padding:0 12px!important;border:1px solid var(--hairline)!important;
+  border-radius:8px!important;background:rgba(255,255,255,.025)!important;color:#c6cdd6!important;
+  font:600 11px/1 var(--mono)!important}
+header button:hover,.links button:hover{
+  color:var(--ink)!important;border-color:rgba(var(--accent-rgb),.48)!important;
+  background:rgba(var(--accent-rgb),.08)!important;filter:none!important}
+
+/* ---- Refinements from the second visual pass ---- */
+/* 5. Sample "cards" (multi-line buttons) were tinted from the page accent, so a
+   Tier-B/blue option inherited an orange wash and read as a warning. Give them a
+   neutral surface with a semantic accent rail instead. */
+button:has(div){background:var(--surface-2)!important;border-color:var(--hairline)!important;
+  color:var(--ink)!important;border-left-width:2px!important;position:relative}
+button:has(div):hover{background:var(--surface-3)!important;border-color:var(--hairline)!important}
+button[class*="bg-emerald"]:has(div),button[class*="bg-green"]:has(div){border-left-color:var(--success)!important}
+button[class*="bg-sky"]:has(div),button[class*="bg-blue"]:has(div),button[class*="bg-indigo"]:has(div){border-left-color:#7ca8ff!important}
+button[class*="bg-rose"]:has(div),button[class*="bg-red"]:has(div){border-left-color:var(--danger)!important}
+button[class*="bg-amber"]:has(div),button[class*="bg-yellow"]:has(div){border-left-color:var(--warning)!important}
+button:has(div)>div:first-child{color:var(--ink)!important}
+button[class*="bg-emerald"]:has(div)>div:first-child{color:#92eac5!important}
+button[class*="bg-sky"]:has(div)>div:first-child,button[class*="bg-blue"]:has(div)>div:first-child{color:#a8c4ff!important}
+button[class*="bg-rose"]:has(div)>div:first-child{color:#ffaaa7!important}
+button:has(div)>div+div{color:var(--muted)!important}
+/* 6. The single primary action per panel (form submit) must out-rank the neutral
+   controls around it — restore a solid accent fill. */
+button[type="submit"]:not(:has(div)),
+form>button:last-child:not(:has(div)),
+button[class*="w-full"]:not([class*="bg-slate"]):not(:has(div)){
+  background:rgba(var(--accent-rgb),.9)!important;border-color:transparent!important;
+  color:#0a0c0f!important;font-weight:750!important}
+button[type="submit"]:not(:has(div)):hover,
+form>button:last-child:not(:has(div)):hover,
+button[class*="w-full"]:not([class*="bg-slate"]):not(:has(div)):hover{
+  filter:brightness(1.08)!important}
+
 </style>
 </head>
 <body class="project-shell">
@@ -288,7 +378,7 @@ async function run(){
   const content = document.getElementById('content').value.trim();
   if(!content) return;
   const d = await moderate(content);
-  if(d.error){ document.getElementById('verdict').innerHTML = `<div class="muted">⚠️ ${d.error}</div>`; return; }
+  if(d.error){ document.getElementById('verdict').innerHTML = `<div class="muted">Error: ${d.error}</div>`; return; }
   renderVerdict(d); refresh();
 }
 
