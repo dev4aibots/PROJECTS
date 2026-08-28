@@ -1,0 +1,29 @@
+{
+  "vendor": "Northwind Industrial Supply",
+  "invoice_number": "NW-88231",
+  "date": "2026-07-19",
+  "currency": "USD",
+  "tax_id": "US-47-1882290",
+  "line_items": [
+    {
+      "description": "Hydraulic valve assembly",
+      "quantity": "4",
+      "unit_price": "312.75",
+      "amount": "1251.00"
+    },
+    {
+      "description": "Industrial lubricant 20L",
+      "quantity": "10",
+      "unit_price": "48.20",
+      "amount": "482.00"
+    },
+    {
+      "description": "Safety gloves (bulk)",
+      "quantity": "3",
+      "unit_price": "89.99",
+      "amount": "296.97"
+    }
+  ],
+  "tax": "162.40",
+  "stated_total": "2129.37"
+}

@@ -1,0 +1,29 @@
+{
+  "vendor": "Acme Cloud Services GmbH",
+  "invoice_number": "INV-2026-04471",
+  "date": "2026-08-01",
+  "currency": "USD",
+  "tax_id": "DE-813992525",
+  "line_items": [
+    {
+      "description": "Kubernetes cluster \u2014 prod (Aug)",
+      "quantity": "1",
+      "unit_price": "1240.00",
+      "amount": "1240.00"
+    },
+    {
+      "description": "Object storage 12TB",
+      "quantity": "12",
+      "unit_price": "21.50",
+      "amount": "258.00"
+    },
+    {
+      "description": "Support plan \u2014 Gold",
+      "quantity": "1",
+      "unit_price": "499.00",
+      "amount": "499.00"
+    }
+  ],
+  "tax": "379.43",
+  "stated_total": "2376.43"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mcp-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node dev-server.js",
+    "test": "node tests/smoke.test.js"
+  }
+}
