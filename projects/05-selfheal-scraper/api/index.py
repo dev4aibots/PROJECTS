@@ -382,6 +382,7 @@ def api_mock_store(layout: str = Query("v1")):
 
 
 @app.get("/api/health")
+@app.get("/health")
 def api_health():
     return {"service": "selfheal-scraper", "status": "ok",
             "mode": "live" if os.environ.get("GROQ_API_KEY") else "demo",
