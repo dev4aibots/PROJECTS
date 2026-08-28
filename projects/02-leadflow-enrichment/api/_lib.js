@@ -184,21 +184,18 @@ function deterministicGrade(lead, domainInfo, firmo) {
 }
 
 async function grade(lead, domainInfo, firmo) {
+  const sysMsg = `You grade B2B leads against this ICP: ${ICP.description}. Reply JSON {"score":0-100,"tier":"A|B|C","reason":"..."} where A>=70, B>=40.`;
+  const userMsg = JSON.stringify({ lead, firmographics: firmo });
+
+  // 1. Groq
   if (process.env.GROQ_API_KEY) {
     try {
       const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          'content-type': 'application/json',
-        },
+        headers: { authorization: `Bearer ${process.env.GROQ_API_KEY}`, 'content-type': 'application/json' },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
-          response_format: { type: 'json_object' },
-          messages: [
-            { role: 'system', content: `You grade B2B leads against this ICP: ${ICP.description}. Reply JSON {"score":0-100,"tier":"A|B|C","reason":"..."} where A>=70, B>=40.` },
-            { role: 'user', content: JSON.stringify({ lead, firmographics: firmo }) },
-          ],
+          model: 'llama-3.1-8b-instant', response_format: { type: 'json_object' },
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
         }),
       });
       if (resp.ok) {
@@ -208,8 +205,55 @@ async function grade(lead, domainInfo, firmo) {
           return { score: parsed.score, tier: parsed.tier, breakdown: { llm_reason: parsed.reason }, grader: 'groq-llama-3.1' };
         }
       }
-    } catch (_) { /* fall through */ }
+    } catch (_) { /* failover */ }
   }
+
+  // 2. NVIDIA NIM
+  if (process.env.NVIDIA_API_KEY) {
+    try {
+      const resp = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'meta/llama-3.1-70b-instruct',
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+        }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        const txt = data.choices[0].message.content;
+        const m = txt.match(/\{[\s\S]*\}/);
+        if (m) {
+          const parsed = JSON.parse(m[0]);
+          if (typeof parsed.score === 'number' && /^[ABC]$/.test(parsed.tier)) {
+            return { score: parsed.score, tier: parsed.tier, breakdown: { llm_reason: parsed.reason }, grader: 'llama-3.1-70b (nvidia nim)' };
+          }
+        }
+      }
+    } catch (_) { /* failover */ }
+  }
+
+  // 3. Mistral AI
+  if (process.env.MISTRAL_API_KEY) {
+    try {
+      const resp = await fetch('https://api.mistral.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.MISTRAL_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'mistral-small-latest', response_format: { type: 'json_object' },
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+        }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        const parsed = JSON.parse(data.choices[0].message.content);
+        if (typeof parsed.score === 'number' && /^[ABC]$/.test(parsed.tier)) {
+          return { score: parsed.score, tier: parsed.tier, breakdown: { llm_reason: parsed.reason }, grader: 'mistral-small' };
+        }
+      }
+    } catch (_) { /* failover */ }
+  }
+
   return deterministicGrade(lead, domainInfo, firmo);
 }
 

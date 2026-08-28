@@ -175,30 +175,75 @@ def heuristic_heal(soup: BeautifulSoup, product):
 
 
 def llm_heal(html_snippet: str, product):
-    """Real path: Llama 3 via Groq extracts price + proposes a selector."""
-    key = os.environ.get("GROQ_API_KEY")
-    if not key:
-        return None
-    try:
-        body = _json.dumps({
-            "model": "llama3-70b-8192",
-            "messages": [
-                {"role": "system", "content":
-                    "You repair broken web scrapers. Given an HTML snippet and a product name, "
-                    "return JSON {\"price\": <number>, \"selector\": \"<css selector for the price node>\"}. JSON only."},
-                {"role": "user", "content": f"Product: {product['name']}\nHTML:\n{html_snippet[:6000]}"},
-            ],
-            "temperature": 0, "response_format": {"type": "json_object"},
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.groq.com/openai/v1/chat/completions", data=body,
-            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=25) as r:
-            out = _json.load(r)
-        d = _json.loads(out["choices"][0]["message"]["content"])
-        return float(d["price"]), str(d["selector"])
-    except Exception:
-        return None
+    """Real path: Multi-provider LLM selector repair (Groq -> Mistral Codestral -> NVIDIA NIM)."""
+    sys_msg = (
+        "You repair broken web scrapers. Given an HTML snippet and a product name, "
+        'return JSON {"price": <number>, "selector": "<css selector for the price node>"}. JSON only.'
+    )
+    user_msg = f"Product: {product['name']}\nHTML:\n{html_snippet[:6000]}"
+
+    # Provider 1: Groq Llama 3 70B
+    groq_key = os.environ.get("GROQ_API_KEY")
+    if groq_key:
+        try:
+            body = _json.dumps({
+                "model": "llama3-70b-8192",
+                "messages": [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}],
+                "temperature": 0, "response_format": {"type": "json_object"},
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.groq.com/openai/v1/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                out = _json.load(r)
+            d = _json.loads(out["choices"][0]["message"]["content"])
+            return float(d["price"]), str(d["selector"])
+        except Exception:
+            pass
+
+    # Provider 2: Mistral Codestral
+    mistral_key = os.environ.get("MISTRAL_API_KEY")
+    if mistral_key:
+        try:
+            body = _json.dumps({
+                "model": "codestral-latest",
+                "messages": [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}],
+                "temperature": 0, "response_format": {"type": "json_object"},
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.mistral.ai/v1/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {mistral_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                out = _json.load(r)
+            d = _json.loads(out["choices"][0]["message"]["content"])
+            return float(d["price"]), str(d["selector"])
+        except Exception:
+            pass
+
+    # Provider 3: NVIDIA NIM
+    nvidia_key = os.environ.get("NVIDIA_API_KEY")
+    if nvidia_key:
+        try:
+            body = _json.dumps({
+                "model": "meta/llama-3.1-70b-instruct",
+                "messages": [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}],
+                "temperature": 0,
+            }).encode()
+            req = urllib.request.Request(
+                "https://integrate.api.nvidia.com/v1/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {nvidia_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                out = _json.load(r)
+            txt = out["choices"][0]["message"]["content"]
+            m = re.search(r"\{.*\}", txt, re.DOTALL)
+            if m:
+                d = _json.loads(m.group(0))
+                return float(d["price"]), str(d["selector"])
+        except Exception:
+            pass
+
+    return None
+
 
 
 # ---------------------------------------------------------------------------

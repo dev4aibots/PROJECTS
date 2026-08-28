@@ -215,30 +215,90 @@ function ruleEngine(content) {
 // ---------------------------------------------------------------------------
 // TIER 2b — Gemini Flash policy evaluation (only when GEMINI_API_KEY is set)
 // ---------------------------------------------------------------------------
-async function geminiEngine(content, contentType) {
-  const key = process.env.GEMINI_API_KEY;
+async function aiEngine(content, contentType) {
   const prompt =
     `You are a content-moderation policy engine. Score this ${contentType} on each category ` +
     `from 0.0 to 1.0: ${CATEGORIES.join(', ')}. Reply ONLY with JSON: ` +
     `{"categories":[{"name":"spam","score":0.0},...]}.\n\nCONTENT:\n${content}`;
-  const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-    },
-  );
-  if (!r.ok) throw new Error(`gemini http ${r.status}`);
-  const d = await r.json();
-  const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
-  const byName = Object.fromEntries((parsed.categories || []).map(c => [c.name, c.score]));
-  const categories = CATEGORIES.map(name => {
-    const score = +(byName[name] || 0).toFixed(2);
-    return { name, score, flagged: score >= FLAG_AT };
-  });
-  return { categories, evidence: {}, engine: 'gemini-1.5-flash' };
+
+  // Provider 1: Gemini
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      const r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        },
+      );
+      if (r.ok) {
+        const d = await r.json();
+        const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+        const byName = Object.fromEntries((parsed.categories || []).map(c => [c.name, c.score]));
+        const categories = CATEGORIES.map(name => {
+          const score = +(byName[name] || 0).toFixed(2);
+          return { name, score, flagged: score >= FLAG_AT };
+        });
+        return { categories, evidence: {}, engine: 'gemini-1.5-flash' };
+      }
+    } catch (_) { /* failover */ }
+  }
+
+  // Provider 2: Groq
+  if (process.env.GROQ_API_KEY) {
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.GROQ_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant', response_format: { type: 'json_object' },
+          messages: [{ role: 'system', content: prompt }],
+        }),
+      });
+      if (r.ok) {
+        const d = await r.json();
+        const parsed = JSON.parse(d.choices[0].message.content);
+        const byName = Object.fromEntries((parsed.categories || []).map(c => [c.name, c.score]));
+        const categories = CATEGORIES.map(name => {
+          const score = +(byName[name] || 0).toFixed(2);
+          return { name, score, flagged: score >= FLAG_AT };
+        });
+        return { categories, evidence: {}, engine: 'groq/llama-3.1-8b' };
+      }
+    } catch (_) { /* failover */ }
+  }
+
+  // Provider 3: NVIDIA NIM
+  if (process.env.NVIDIA_API_KEY) {
+    try {
+      const r = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'meta/llama-3.1-70b-instruct',
+          messages: [{ role: 'system', content: prompt }],
+        }),
+      });
+      if (r.ok) {
+        const d = await r.json();
+        const txt = d.choices[0].message.content;
+        const m = txt.match(/\{[\s\S]*\}/);
+        if (m) {
+          const parsed = JSON.parse(m[0]);
+          const byName = Object.fromEntries((parsed.categories || []).map(c => [c.name, c.score]));
+          const categories = CATEGORIES.map(name => {
+            const score = +(byName[name] || 0).toFixed(2);
+            return { name, score, flagged: score >= FLAG_AT };
+          });
+          return { categories, evidence: {}, engine: 'nvidia/llama-3.1-70b' };
+        }
+      }
+    } catch (_) { /* failover */ }
+  }
+
+  return ruleEngine(content);
 }
 
 // ---------------------------------------------------------------------------
@@ -345,19 +405,8 @@ async function moderate({ content, content_type = 'text', user_id }) {
   steps.push({ step: 'cache_check', detail: 'MISS — running analysis' });
 
   // TIER 2 — analysis
-  let analysis;
-  if (process.env.GEMINI_API_KEY) {
-    try {
-      analysis = await geminiEngine(content, content_type);
-      steps.push({ step: 'ai_analysis', detail: 'Gemini Flash policy evaluation' });
-    } catch {
-      analysis = ruleEngine(content);
-      steps.push({ step: 'ai_analysis', detail: 'Gemini failed → deterministic rule engine' });
-    }
-  } else {
-    analysis = ruleEngine(content);
-    steps.push({ step: 'ai_analysis', detail: 'deterministic rule engine (demo mode)' });
-  }
+  const analysis = await aiEngine(content, content_type);
+  steps.push({ step: 'ai_analysis', detail: `policy evaluation (${analysis.engine})` });
 
   const verdict = assembleVerdict(analysis);
   await cacheSet(hash, verdict);

@@ -96,21 +96,18 @@ function classify(text) {
 // Draft composer — Groq (Llama 3) when GROQ_API_KEY is set, else KB template
 // ---------------------------------------------------------------------------
 async function draftReply(ticket, articles) {
+  const sysMsg = 'You are a concise, friendly support agent. Use ONLY the provided KB context. Sign off as "DuraSupport Team".';
+  const userMsg = `Ticket from ${ticket.customer} <${ticket.email}>\nSubject: ${ticket.subject}\n\n${ticket.body}\n\nKB context:\n${articles.map(a => `- ${a.title}: ${a.body}`).join('\n')}`;
+
+  // 1. Groq
   if (process.env.GROQ_API_KEY) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          'content-type': 'application/json',
-        },
+        headers: { authorization: `Bearer ${process.env.GROQ_API_KEY}`, 'content-type': 'application/json' },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          temperature: 0.3,
-          messages: [
-            { role: 'system', content: 'You are a concise, friendly support agent. Use ONLY the provided KB context. Sign off as "DuraSupport Team".' },
-            { role: 'user', content: `Ticket from ${ticket.customer} <${ticket.email}>\nSubject: ${ticket.subject}\n\n${ticket.body}\n\nKB context:\n${articles.map(a => `- ${a.title}: ${a.body}`).join('\n')}` },
-          ],
+          model: 'llama-3.3-70b-versatile', temperature: 0.3,
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
         }),
       });
       if (r.ok) {
@@ -118,7 +115,45 @@ async function draftReply(ticket, articles) {
         const text = data.choices?.[0]?.message?.content;
         if (text) return { reply: text.trim(), engine: 'groq/llama-3.3-70b' };
       }
-    } catch (_) { /* fall through to template */ }
+    } catch (_) { /* failover */ }
+  }
+
+  // 2. NVIDIA NIM
+  if (process.env.NVIDIA_API_KEY) {
+    try {
+      const r = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'meta/llama-3.1-70b-instruct', temperature: 0.3,
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+        }),
+      });
+      if (r.ok) {
+        const data = await r.json();
+        const text = data.choices?.[0]?.message?.content;
+        if (text) return { reply: text.trim(), engine: 'nvidia/llama-3.1-70b' };
+      }
+    } catch (_) { /* failover */ }
+  }
+
+  // 3. Mistral AI
+  if (process.env.MISTRAL_API_KEY) {
+    try {
+      const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.MISTRAL_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: 'mistral-small-latest', temperature: 0.3,
+          messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+        }),
+      });
+      if (r.ok) {
+        const data = await r.json();
+        const text = data.choices?.[0]?.message?.content;
+        if (text) return { reply: text.trim(), engine: 'mistral-small' };
+      }
+    } catch (_) { /* failover */ }
   }
   // Deterministic template composer
   const top = articles[0];

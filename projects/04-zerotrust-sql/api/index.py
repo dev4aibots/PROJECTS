@@ -226,35 +226,77 @@ FALLBACK_SQL = ("SELECT o.id, o.order_date, o.status, c.name AS customer FROM or
 
 
 def nl2sql(question: str) -> tuple[str, dict, str]:
-    """Returns (sql, chart_hint, generator). Real path uses Groq Llama 3; demo path pattern-matches."""
-    key = os.environ.get("GROQ_API_KEY")
-    if key:
+    """Returns (sql, chart_hint, generator). Multi-provider failover: Groq -> NVIDIA NIM -> Mistral Codestral -> Demo pattern matcher."""
+    schema_txt = "\n".join(f"{t}({', '.join(cols)})" for t, cols in SCHEMA_DOC.items())
+    sys_prompt = (
+        "You write a single SQLite SELECT statement answering the user's analytics question. "
+        f"Schema:\n{schema_txt}\nReturn ONLY the SQL, no markdown formatting or backticks."
+    )
+    
+    # Provider 1: Groq Llama 3 70B
+    groq_key = os.environ.get("GROQ_API_KEY")
+    if groq_key:
         try:
-            schema_txt = "\n".join(f"{t}({', '.join(cols)})" for t, cols in SCHEMA_DOC.items())
             body = json.dumps({
                 "model": "llama3-70b-8192",
-                "messages": [
-                    {"role": "system", "content":
-                        "You write a single SQLite SELECT statement answering the user's analytics question. "
-                        f"Schema:\n{schema_txt}\nReturn ONLY the SQL, no markdown."},
-                    {"role": "user", "content": question},
-                ],
+                "messages": [{"role": "system", "content": sys_prompt}, {"role": "user", "content": question}],
                 "temperature": 0,
             }).encode()
             req = urllib.request.Request(
                 "https://api.groq.com/openai/v1/chat/completions", data=body,
-                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=20) as r:
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
                 out = json.load(r)
-            sql = out["choices"][0]["message"]["content"].strip().strip("`")
+            sql = out["choices"][0]["message"]["content"].strip().strip("`").replace("sql\n", "").strip()
             return sql, {"type": "none", "x": None, "y": None}, "llama3-70b (groq)"
         except Exception:
-            pass  # fall through to demo
+            pass  # rate limit or network issue -> failover to next provider
+
+    # Provider 2: NVIDIA NIM (Llama 3.1 70B Instruct on H100)
+    nvidia_key = os.environ.get("NVIDIA_API_KEY")
+    if nvidia_key:
+        try:
+            body = json.dumps({
+                "model": "meta/llama-3.1-70b-instruct",
+                "messages": [{"role": "system", "content": sys_prompt}, {"role": "user", "content": question}],
+                "temperature": 0,
+            }).encode()
+            req = urllib.request.Request(
+                "https://integrate.api.nvidia.com/v1/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {nvidia_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                out = json.load(r)
+            sql = out["choices"][0]["message"]["content"].strip().strip("`").replace("sql\n", "").strip()
+            return sql, {"type": "none", "x": None, "y": None}, "llama-3.1-70b (nvidia nim)"
+        except Exception:
+            pass
+
+    # Provider 3: Mistral Codestral
+    mistral_key = os.environ.get("MISTRAL_API_KEY")
+    if mistral_key:
+        try:
+            body = json.dumps({
+                "model": "codestral-latest",
+                "messages": [{"role": "system", "content": sys_prompt}, {"role": "user", "content": question}],
+                "temperature": 0,
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.mistral.ai/v1/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {mistral_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                out = json.load(r)
+            sql = out["choices"][0]["message"]["content"].strip().strip("`").replace("sql\n", "").strip()
+            return sql, {"type": "none", "x": None, "y": None}, "codestral (mistral ai)"
+        except Exception:
+            pass
+
+    # Demo Fallback
     q = (question or "").lower()
     for pat, sql, chart in DEMO_PATTERNS:
         if re.search(pat, q):
             return sql, chart, "demo pattern-matcher"
     return FALLBACK_SQL, {"type": "none", "x": None, "y": None}, "demo fallback"
+
 
 
 # ---------------------------------------------------------------------------
