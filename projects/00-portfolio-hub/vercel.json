@@ -8,19 +8,42 @@
     }
   ],
   "rewrites": [
-    { "source": "/01-finaudit-idp", "destination": "/01-finaudit-idp/index.html" },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "02-leadflow-enrichment.vercel.app" }],
+      "destination": "/02-leadflow-enrichment/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "03-durable-support.vercel.app" }],
+      "destination": "/03-durable-support/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "04-zerotrust-sql.vercel.app" }],
+      "destination": "/04-zerotrust-sql/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "05-selfheal-scraper.vercel.app" }],
+      "destination": "/05-selfheal-scraper/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "06-modguard-moderation.vercel.app" }],
+      "destination": "/06-modguard-moderation/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "07-mcp-gateway.vercel.app" }],
+      "destination": "/07-mcp-gateway/index.html"
+    },
     { "source": "/01-finaudit-idp/(.*)", "destination": "/01-finaudit-idp/index.html" },
-    { "source": "/02-leadflow-enrichment", "destination": "/02-leadflow-enrichment/index.html" },
     { "source": "/02-leadflow-enrichment/(.*)", "destination": "/02-leadflow-enrichment/index.html" },
-    { "source": "/03-durable-support", "destination": "/03-durable-support/index.html" },
     { "source": "/03-durable-support/(.*)", "destination": "/03-durable-support/index.html" },
-    { "source": "/04-zerotrust-sql", "destination": "/04-zerotrust-sql/index.html" },
     { "source": "/04-zerotrust-sql/(.*)", "destination": "/04-zerotrust-sql/index.html" },
-    { "source": "/05-selfheal-scraper", "destination": "/05-selfheal-scraper/index.html" },
     { "source": "/05-selfheal-scraper/(.*)", "destination": "/05-selfheal-scraper/index.html" },
-    { "source": "/06-modguard-moderation", "destination": "/06-modguard-moderation/index.html" },
     { "source": "/06-modguard-moderation/(.*)", "destination": "/06-modguard-moderation/index.html" },
-    { "source": "/07-mcp-gateway", "destination": "/07-mcp-gateway/index.html" },
     { "source": "/07-mcp-gateway/(.*)", "destination": "/07-mcp-gateway/index.html" }
   ]
 }
