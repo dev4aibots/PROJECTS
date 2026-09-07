@@ -1,19 +1,21 @@
 {
   "version": 1,
   "updated": "2026-09-07",
-  "active_task": "DOCS",
+  "active_task": "CF-01",
   "tasks": [
     {
       "id": "DOCS",
       "title": "Documentation and resumability contract",
-      "status": "in_progress",
+      "status": "verified",
       "depends_on": [],
-      "evidence": []
+      "evidence": [
+        "2026-09-07: continuity validator passed for 30 documents; node --test suite/scripts/verify-state.test.mjs passed 8/8."
+      ]
     },
     {
       "id": "CF-01",
       "title": "ClientFlow project workbench and tested domain",
-      "status": "planned",
+      "status": "in_progress",
       "depends_on": [
         "DOCS"
       ],

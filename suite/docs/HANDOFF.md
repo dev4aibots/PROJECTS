@@ -1,9 +1,17 @@
 # Handoff
 
-Updated: 2026-09-07. Active task: **DOCS** (verification before CF-01).
+Updated: 2026-09-07. Active task: **CF-01**.
 
 ## Exact next action
-Run `node suite/scripts/verify-state.mjs` and `node --test suite/scripts/verify-state.test.mjs`. If both pass, mark DOCS verified and claim CF-01. Implement the bounded project workbench per its PRD and file ledger.
+Implement the CF-01 paths in `suite/docs/projects/clientflow/FILES.md`. Acceptance: immutable validated sample project creation/editing, optimistic version guard, date-safe metrics, URL filters/table/board/pagination, responsive native forms, honest memory-only boundary. Run lint, typecheck, domain tests, build, browser flows and axe before verification.
+
+## Feature plan
+- No additional product scope. Existing file ledger is the implementation plan.
+- Dependencies: pinned Next 16 / React 19, TypeScript strict, Zod, Tailwind 4, Phosphor icons, Vitest, Playwright and axe. Node 22.
+- Pure domain first, then shared in-memory provider, form and workbench routes. No remote API or auth simulation.
+- Invalid/stale/missing records return explicit errors; draft text is retained. Date-only comparisons use a fixed synthetic reference day, not host timezone.
+- New project creation disabled during submission; mutation reads latest ref so repeated/stale updates do not overwrite prior changes.
+
 
 ## Current reality
 - Only ClientFlow, SupportDesk AI and InvoiceHub are in scope. All seven legacy apps, their hub, root docs and Vercel config were removed at the owner's explicit request.
