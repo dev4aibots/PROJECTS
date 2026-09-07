@@ -1,6 +1,6 @@
 # ClientFlow architecture and schema
 
-Target stack and shared auth: ../../ARCHITECTURE.md. Schema below is planned until CF-02. Current implementation scope: CF-01.
+Target stack and shared auth: ../../ARCHITECTURE.md. Schema below is planned until CF-02 (active). CF-01 (demo workbench) is verified; see FILES.md for evidence.
 
 ## Routes
 | Route | Boundary / purpose |

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "updated": "2026-09-07",
-  "active_task": "CF-01",
+  "active_task": "CF-02",
   "tasks": [
     {
       "id": "DOCS",
@@ -15,16 +15,21 @@
     {
       "id": "CF-01",
       "title": "ClientFlow project workbench and tested domain",
-      "status": "in_progress",
+      "status": "verified",
       "depends_on": [
         "DOCS"
       ],
-      "evidence": []
+      "evidence": [
+        "2026-09-07: npm run lint clean; npm run typecheck clean; vitest 34/34 (tests/projects.test.ts).",
+        "2026-09-07: next build (Turbopack, cpus:1) produced 7 routes; needs ~2 GB swap in a 1 GB container.",
+        "2026-09-07: Playwright tests/workbench.spec.ts 16/16 desktop + 16/16 iPhone 13 incl. axe WCAG 2.1 A/AA on /demo, /demo/projects, ?view=board, /new, /guide. axe caught 3 real contrast failures that were fixed (commit 26dc086).",
+        "Boundary: browser memory only. Proves interaction and accessibility, not persistence, RLS or auth."
+      ]
     },
     {
       "id": "CF-02",
       "title": "Tenant schema and adversarial RLS tests",
-      "status": "planned",
+      "status": "in_progress",
       "depends_on": [
         "CF-01"
       ],

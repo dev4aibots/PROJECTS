@@ -1,43 +1,44 @@
 # ClientFlow file ledger
 
-Paths relative to `suite/apps/clientflow/` unless prefixed `suite/`. Initially planned; update statuses after implementation and tests.
+Paths relative to `suite/apps/clientflow/` unless prefixed `suite/`. CF-01 rows carry their verification evidence; later-gate rows are planned only.
 
 | File | Symbols / responsibility | Gate | State |
 |---|---|---|---|
-| package.json | scripts, exact dependency versions, Node engine | CF-01 | planned |
-| package-lock.json | reproducible dependencies | CF-01 | planned |
-| tsconfig.json | strict TypeScript and alias | CF-01 | planned |
-| next-env.d.ts | Next-generated ambient types | CF-01 | planned |
-| next.config.ts | app runtime configuration | CF-01 | planned |
-| postcss.config.mjs | Tailwind 4 plugin | CF-01 | planned |
-| eslint.config.mjs | Next TypeScript lint | CF-01 | planned |
-| vitest.config.ts | domain test environment | CF-01 | planned |
-| playwright.config.ts | browser projects/server | CF-01 | planned |
-| .gitignore | env/build/test outputs excluded | CF-01 | planned |
-| .env.example | explicit no credentials for UI milestone | CF-01 | planned |
-| README.md | implemented commands and limitations | CF-01 | planned |
-| src/app/layout.tsx | RootLayout, metadata, skip link | CF-01 | planned |
-| src/app/globals.css | design tokens and responsive components | CF-01 | planned |
-| src/app/page.tsx | explicit demo entry redirect | CF-01 | planned |
-| src/app/not-found.tsx | missing-page recovery | CF-01 | planned |
-| src/app/error.tsx | safe route error/retry | CF-01 | planned |
-| src/app/demo/layout.tsx | demo provider + shell boundary | CF-01 | planned |
-| src/app/demo/page.tsx | overview derived from sample records | CF-01 | planned |
-| src/app/demo/projects/page.tsx | Suspense boundary for URL state | CF-01 | planned |
-| src/app/demo/projects/new/page.tsx | create form | CF-01 | planned |
-| src/app/demo/projects/[id]/page.tsx | detail/edit route | CF-01 | planned |
-| src/app/demo/guide/page.tsx | implementation limits and flow | CF-01 | planned |
-| src/components/app-shell.tsx | accessible sidebar and navigation | CF-01 | planned |
-| src/components/demo-provider.tsx | sample state context, save/revise commands | CF-01 | planned |
-| src/components/project-workbench.tsx | search/filter/table/board/pagination | CF-01 | planned |
-| src/components/project-form.tsx | shared validated create/edit form | CF-01 | planned |
-| src/components/project-detail.tsx | edit data lookup and not-found state | CF-01 | planned |
-| src/components/overview.tsx | counts and deadline list | CF-01 | planned |
-| src/components/status-badge.tsx | text + semantic status style | CF-01 | planned |
-| src/lib/projects.ts | schema, types, filters, metrics, date handling, versioned updates | CF-01 | planned |
-| src/lib/demo-data.ts | synthetic clients/projects, fixed reference date | CF-01 | planned |
-| tests/projects.test.ts | validation/date/filter/metrics/conflict tests | CF-01 | planned |
-| tests/demo.spec.ts | browser create/edit/filter/board/mobile/axe | CF-01 | planned |
+| package.json | scripts, exact dependency versions, Node engine | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| package-lock.json | reproducible dependencies | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| tsconfig.json | strict TypeScript and alias | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| next-env.d.ts | Next-generated ambient types | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| next.config.ts | app runtime configuration | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| postcss.config.mjs | Tailwind 4 plugin | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| eslint.config.mjs | Next TypeScript lint | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| vitest.config.ts | domain test environment | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| playwright.config.ts | browser projects/server | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| .gitignore | env/build/test outputs excluded | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| .env.example | explicit no credentials for UI milestone | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| README.md | implemented commands and limitations | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/layout.tsx | RootLayout, metadata, skip link | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/globals.css | design tokens and responsive components | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/page.tsx | explicit demo entry redirect | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/not-found.tsx | missing-page recovery | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/error.tsx | safe route error/retry | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/layout.tsx | demo provider + shell boundary | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/page.tsx | overview derived from sample records | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/projects/page.tsx | Suspense boundary for URL state | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/projects/new/page.tsx | create form | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/projects/[id]/page.tsx | detail/edit route | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/app/demo/guide/page.tsx | implementation limits and flow | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/app-shell.tsx | accessible sidebar and navigation | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/demo-provider.tsx | sample state context, save/revise commands | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/project-workbench.tsx | search/filter/table/board/pagination | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/project-form.tsx | shared validated create/edit form | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/project-detail.tsx | edit data lookup and not-found state | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/overview.tsx | counts and deadline list | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/icons.ts | per-icon re-exports; barrel import exhausted 1 GB build | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/components/status-badge.tsx | text + semantic status style | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/lib/projects.ts | schema, types, filters, metrics, date handling, versioned updates | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| src/lib/demo-data.ts | synthetic clients/projects, fixed reference date | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| tests/projects.test.ts | validation/date/filter/metrics/conflict tests | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
+| tests/workbench.spec.ts | browser routing/filters/board mutation/create-edit/reload boundary/axe/skip link (was planned as demo.spec.ts) | CF-01 | verified 2026-09-07: lint, typecheck, 34 unit, build, 32 browser/axe |
 | src/lib/supabase/server.ts | server-only cookie client | CF-03 | planned |
 | src/lib/supabase/client.ts | browser auth client | CF-03 | planned |
 | src/proxy.ts | auth refresh with cookie propagation | CF-03 | planned |
