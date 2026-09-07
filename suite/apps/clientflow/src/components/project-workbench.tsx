@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowRight, CalendarBlank, CheckCircle, Columns, FolderSimple, ListBullets, MagnifyingGlass, Plus, WarningCircle } from '@phosphor-icons/react';
+import { ArrowRight, CalendarBlank, CheckCircle, Columns, FolderSimple, ListBullets, MagnifyingGlass, Plus, WarningCircle } from './icons';
 import { useState, type FormEvent } from 'react';
 import { useDemo } from './demo-provider';
 import { StatusBadge } from './status-badge';

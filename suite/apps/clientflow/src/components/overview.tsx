@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { ArrowRight, Plus, WarningCircle } from '@phosphor-icons/react';
+import { ArrowRight, Plus, WarningCircle } from './icons';
 import { useDemo } from './demo-provider';
 import { DeadlineRail, MetricStrip } from './project-workbench';
 import { StatusBadge } from './status-badge';

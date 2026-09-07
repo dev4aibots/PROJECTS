@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Check, FolderSimple, Info } from '@phosphor-icons/react';
+import { ArrowLeft, Check, FolderSimple, Info } from './icons';
 import { useDemo } from './demo-provider';
 import { projectStatuses, statusLabels, type FieldErrors, type Project, type ProjectInput } from '@/lib/projects';
 export function ProjectForm({ project }: { project?: Project }) {

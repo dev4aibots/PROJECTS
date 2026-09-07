@@ -1,5 +1,5 @@
 'use client';
-import { ArrowRight, ArrowCounterClockwise, CheckCircle, Database, Flask } from '@phosphor-icons/react';
+import { ArrowRight, ArrowCounterClockwise, CheckCircle, Database, Flask } from '@/components/icons';
 import Link from 'next/link';
 import { useDemo } from '@/components/demo-provider';
 export default function Guide() {

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowUpRight, BookOpen, CirclesFour, FolderSimple, Flask, SquaresFour, X } from '@phosphor-icons/react';
+import { ArrowUpRight, BookOpen, CirclesFour, FolderSimple, Flask, SquaresFour, X } from './icons';
 import { useDemo } from './demo-provider';
 import type { ReactNode } from 'react';
 const nav = [{href:'/demo',label:'Overview',icon:SquaresFour}, {href:'/demo/projects',label:'Projects',icon:FolderSimple}, {href:'/demo/guide',label:'How it works',icon:BookOpen}];
