@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "updated": "2026-09-07",
+  "active_task": "DOCS",
+  "tasks": [
+    {
+      "id": "DOCS",
+      "title": "Documentation and resumability contract",
+      "status": "in_progress",
+      "depends_on": [],
+      "evidence": []
+    },
+    {
+      "id": "CF-01",
+      "title": "ClientFlow project workbench and tested domain",
+      "status": "planned",
+      "depends_on": [
+        "DOCS"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-02",
+      "title": "Tenant schema and adversarial RLS tests",
+      "status": "planned",
+      "depends_on": [
+        "CF-01"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-03",
+      "title": "Authentication and workspace onboarding",
+      "status": "planned",
+      "depends_on": [
+        "CF-02"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-04",
+      "title": "Persistent clients and projects",
+      "status": "planned",
+      "depends_on": [
+        "CF-03"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-05",
+      "title": "Tasks, comments and concurrency",
+      "status": "planned",
+      "depends_on": [
+        "CF-04"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-06",
+      "title": "Team invitations and client portal",
+      "status": "planned",
+      "depends_on": [
+        "CF-05"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-07",
+      "title": "Private files, activity and notifications",
+      "status": "planned",
+      "depends_on": [
+        "CF-06"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CF-08",
+      "title": "ClientFlow release and learning evidence",
+      "status": "planned",
+      "depends_on": [
+        "CF-07"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SD-01",
+      "title": "SupportDesk inbox and schema",
+      "status": "planned",
+      "depends_on": [
+        "CF-08"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SD-02",
+      "title": "Knowledge ingestion and tenant retrieval",
+      "status": "planned",
+      "depends_on": [
+        "SD-01"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SD-03",
+      "title": "Grounded answering and human handoff",
+      "status": "planned",
+      "depends_on": [
+        "SD-02"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SD-04",
+      "title": "Leads, analytics and abuse controls",
+      "status": "planned",
+      "depends_on": [
+        "SD-03"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "SD-05",
+      "title": "SupportDesk release and evaluation evidence",
+      "status": "planned",
+      "depends_on": [
+        "SD-04"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "IH-01",
+      "title": "InvoiceHub money domain and schema",
+      "status": "planned",
+      "depends_on": [
+        "SD-05"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "IH-02",
+      "title": "Customers and invoice editor",
+      "status": "planned",
+      "depends_on": [
+        "IH-01"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "IH-03",
+      "title": "Issue, payment, void and PDF",
+      "status": "planned",
+      "depends_on": [
+        "IH-02"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "IH-04",
+      "title": "Expenses, reports and exports",
+      "status": "planned",
+      "depends_on": [
+        "IH-03"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "IH-05",
+      "title": "InvoiceHub release and accounting evidence",
+      "status": "planned",
+      "depends_on": [
+        "IH-04"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "FINAL",
+      "title": "Owner credentials, deployment and hosted smoke checks",
+      "status": "planned",
+      "depends_on": [
+        "CF-08",
+        "SD-05",
+        "IH-05"
+      ],
+      "evidence": []
+    }
+  ]
+}
