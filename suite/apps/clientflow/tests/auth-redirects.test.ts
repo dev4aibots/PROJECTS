@@ -13,7 +13,7 @@ describe('safeNextPath', () => {
   it('strips fragments', () => {
     expect(safeNextPath('/app/x#token=abc')).toBe('/app/x');
   });
-  it.each([
+  it.each<[unknown, string]>([
     ['https://evil.example/app', 'absolute URL'],
     ['//evil.example/app', 'protocol-relative'],
     ['/\\evil.example', 'backslash host trick'],

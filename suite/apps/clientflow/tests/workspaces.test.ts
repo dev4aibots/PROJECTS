@@ -7,7 +7,7 @@ describe('parseWorkspaceInput', () => {
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.data.name).toBe('Studio North');
   });
-  it.each([
+  it.each<[unknown, string]>([
     [{ name: '' }, 'empty'],
     [{ name: '   ' }, 'whitespace only'],
     [{ name: 'x'.repeat(WORKSPACE_NAME_MAX + 1) }, 'too long'],
