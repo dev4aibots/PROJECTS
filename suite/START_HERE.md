@@ -36,7 +36,7 @@ Use repository files and actual test output as memory. Follow the active task on
 Read its project PRD/ARCHITECTURE/FILES/LEARNING documents and referenced source.
 Run the documented baseline commands before editing. Report discrepancies.
 Finish one vertical slice, add adversarial tests, update learning explanations,
-file ledger and handoff; commit and update the PR. Preserve unrelated legacy files.
+file ledger and handoff; commit and update the PR. Keep only the three requested products; do not restore removed legacy apps.
 Continue sequentially through the roadmap; do not scaffold all projects at once.
 No fake success, fake authentication, silent mock fallback, or unverified release claims.
 If interrupted, write the exact next action, changed files, tests, blockers and risks.

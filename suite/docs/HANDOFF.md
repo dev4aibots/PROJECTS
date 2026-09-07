@@ -1,18 +1,19 @@
 # Handoff
 
-Updated: 2026-09-07. Active task: **DOCS**.
+Updated: 2026-09-07. Active task: **DOCS** (verification before CF-01).
 
 ## Exact next action
-Complete the suite documentation set listed in START_HERE, then verify every local Markdown link and JSON task dependency. Do not start application code until DOCS is verified.
+Run `node suite/scripts/verify-state.mjs` and `node --test suite/scripts/verify-state.test.mjs`. If both pass, mark DOCS verified and claim CF-01. Implement the bounded project workbench per its PRD and file ledger.
 
 ## Current reality
-- Existing seven-project repository was synchronized with `origin/main`; conflicts resolved in favor of upstream.
-- Untracked earlier FinAudit files were preserved at `.git/preexisting-finaudit-backup/` before merge. This is a local safety backup, not part of portable source.
-- No new full-stack app exists yet. No credential or hosted database has been used.
-- Latest user priority is ClientFlow → SupportDesk AI → InvoiceHub.
+- Only ClientFlow, SupportDesk AI and InvoiceHub are in scope. All seven legacy apps, their hub, root docs and Vercel config were removed at the owner's explicit request.
+- GitHub checkpoint `7dff9c0` and the uploaded archive agree: specifications exist; no new application yet.
+- Local previous tracked code is preserved on `archive/local-before-three-projects-2026-09-07`; untracked DuraSupport was moved to `.git/pre-scope-durable-support`. Recovery only, not part of the portable deliverable.
+- Node 22/npm 10 available. Docker executable absent: local Supabase verification will need a suitable runtime at CF-02; do not substitute mocked RLS.
+- No hosted credentials or deployment used.
 
-## Known constraints
-Supabase Free permits two active projects; choose one shared portfolio database. Vercel Hobby is non-commercial. Public email auth needs SMTP configuration or OAuth; do not disable confirmation. AI has no guaranteed free hosted inference. See RESEARCH when written.
+## Git
+Branch `genspark_ai_developer`, PR https://github.com/dev4aibots/PROJECTS/pull/2.
 
-## Git and verification
-Branch: `genspark_ai_developer`; remote `dev4aibots/PROJECTS`. GitHub access available. Initial sync produced no net tree changes against main; PR can be opened after this documentation change.
+## Boundaries
+Supabase free-tier quotas and Vercel non-commercial terms are documented in RESEARCH. Browser memory proves interaction only, not persistence/security. Complete ClientFlow before scaffolding the next product.

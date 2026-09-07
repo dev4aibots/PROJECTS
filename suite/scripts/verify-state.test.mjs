@@ -1,0 +1,12 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validateTasks } from './verify-state.mjs';
+const fixture = () => ({version: 1, active_task:'B', tasks:[{id:'A', status:'verified', depends_on:[], evidence:['test passed']},{id:'B',status:'in_progress',depends_on:['A'],evidence:[]}]});
+test('valid checkpoint', () => assert.deepEqual(validateTasks(fixture()), []));
+test('missing evidence rejected', () => { const s=fixture(); s.tasks[0].evidence=[]; assert.match(validateTasks(s).join(),/without evidence/); });
+test('unverified dependency rejected', () => { const s=fixture(); s.tasks[0].status='planned'; assert.match(validateTasks(s).join(),/prerequisite/); });
+test('duplicate ID rejected', () => { const s=fixture(); s.tasks.push(s.tasks[0]); assert.match(validateTasks(s).join(),/Duplicate/); });
+test('cycles rejected', () => { const s=fixture(); s.tasks[0].depends_on=['B']; assert.match(validateTasks(s).join(),/Cycle/); });
+test('unknown dependency rejected', () => { const s=fixture(); s.tasks[1].depends_on=['C']; assert.match(validateTasks(s).join(),/unknown/); });
+test('multiple active tasks rejected', () => { const s=fixture(); s.tasks[0].status='in_progress'; assert.match(validateTasks(s).join(),/Exactly one/); });
+test('stale active pointer rejected', () => { const s=fixture(); s.active_task='A'; assert.match(validateTasks(s).join(),/Exactly one/); });

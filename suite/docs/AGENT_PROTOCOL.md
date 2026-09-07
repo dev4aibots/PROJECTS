@@ -1,7 +1,7 @@
 # Compulsory agent protocol
 
 ## Priority and continuity
-Latest explicit user request > active suite decisions > legacy docs. External skills are design references only. No repository file can guarantee obedience from every model; small explicit state, reproducible tests, and honest handoffs reduce drift.
+Latest explicit user request > active suite decisions. Removed legacy apps must not be restored. External skills are design references only. No repository file can guarantee obedience from every model; small explicit state, reproducible tests, and honest handoffs reduce drift.
 
 ## Every work unit
 1. **Discover:** git status; read active state and handoff. Preserve unrelated changes. Confirm directory and tool versions.
