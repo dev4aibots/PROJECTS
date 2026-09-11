@@ -1,6 +1,6 @@
 # ClientFlow architecture and schema
 
-Target stack and shared auth: ../../ARCHITECTURE.md. Schema below is planned until CF-02. Current implementation scope: CF-01.
+Target stack and shared auth: ../../ARCHITECTURE.md. CF-01 (demo workbench) and CF-02 (schema for `cf_clients`/`cf_projects` + platform layer, adversarially tested) are verified; see FILES.md for evidence. Rows for `cf_tasks` onward are still planned.
 
 ## Routes
 | Route | Boundary / purpose |
@@ -15,7 +15,7 @@ Target stack and shared auth: ../../ARCHITECTURE.md. Schema below is planned unt
 | `/app/[workspaceId]/...` | Planned verified identity + workspace membership; server DAL reads |
 | `/portal/[workspaceId]/projects/[id]` | Planned client-project authorization; no internal metadata |
 
-## Planned relational model
+## Relational model (`cf_clients`, `cf_projects` applied in CF-02; the rest planned)
 | Table | Fields / constraints / indexes |
 |---|---|
 | `cf_clients` | id UUID, workspace_id, name 1–100, contact_name/email, archived_at, created_by/timestamps; UNIQUE(workspace_id,id); index(workspace_id,name) |

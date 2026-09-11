@@ -1,19 +1,19 @@
 # Agent entry point — read before changing anything
 
 ## Active request (2026-09-07)
-Build **ClientFlow, SupportDesk AI, InvoiceHub** as learnable, tested full-stack portfolio products. The user's latest request supersedes the older seven-automation roadmap. That work is preserved in `projects/` and `docs/`; do not delete, rewrite, or deploy it as part of this program.
+Build **ClientFlow, SupportDesk AI, InvoiceHub** as learnable, tested full-stack portfolio products. The latest user explicitly requested removal of extra projects. Only these three products belong in the source tree. The old seven-project apps, portfolio hub, root docs and root Vercel rewrites were removed; recover them from Git history if separately requested. Never restore them during synchronization.
 
 ## Mandatory resume sequence
 1. Read `suite/START_HERE.md`.
 2. Read `suite/STATUS.json` (machine-readable task state) and `suite/docs/HANDOFF.md` (exact next action).
 3. Read only the active task's PRD, architecture, file manifest, and dependencies. Finished files may be read to verify interfaces. Do not blindly trust a checkbox or rewrite completed modules.
-4. Run `node suite/scripts/verify-state.mjs` once implemented; before then inspect the JSON manually. Run the active app's recorded tests. Compare Git status with the handoff before editing.
+4. Run `node suite/scripts/verify-state.mjs` and `node --test suite/scripts/verify-state.test.mjs`. Run the active app's recorded tests. Compare Git status with the handoff before editing.
 5. Claim ONE task in STATUS; implement one vertical slice; review and test; update manifest, learning guide, evidence and handoff in the same change.
 6. Commit scoped files on `genspark_ai_developer`. Fetch/merge remote before PR; preserve upstream work. Never stage unrelated user changes. Push and create/update PR when credentials permit; otherwise record the blocker honestly.
 7. Stop with one executable next action and explicit blockers. Never mark tests passed without running them. Never label demo-only features production-ready.
 
 ## Boundaries
-- Work for this request lives in `suite/`. Root README/AGENTS are routing documents; existing root `vercel.json` belongs to the legacy portfolio and must not be used for these apps.
+- Work for this request lives in `suite/`. Root README/AGENTS are routing documents; there is no root deployment config. Select each app directory as its Vercel root.
 - Documentation before code. Planned file paths are contracts, not proof that files exist.
 - No credentials in Git, logs, screenshots, docs, seeds, fixtures, or exports. `.env.example` has placeholders only. Never automatically fall back to demo mode on a live backend failure.
 - Do not run remote migrations/deployments or create paid resources without user approval. Local Supabase is for development and tests; hosted credentials belong at the final user deployment gate.

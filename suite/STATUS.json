@@ -1,37 +1,50 @@
 {
   "version": 1,
   "updated": "2026-09-07",
-  "active_task": "DOCS",
+  "active_task": "CF-03",
   "tasks": [
     {
       "id": "DOCS",
       "title": "Documentation and resumability contract",
-      "status": "in_progress",
+      "status": "verified",
       "depends_on": [],
-      "evidence": []
+      "evidence": [
+        "2026-09-07: continuity validator passed for 30 documents; node --test suite/scripts/verify-state.test.mjs passed 8/8."
+      ]
     },
     {
       "id": "CF-01",
       "title": "ClientFlow project workbench and tested domain",
-      "status": "planned",
+      "status": "verified",
       "depends_on": [
         "DOCS"
       ],
-      "evidence": []
+      "evidence": [
+        "2026-09-07: npm run lint clean; npm run typecheck clean; vitest 34/34 (tests/projects.test.ts).",
+        "2026-09-07: next build (Turbopack, cpus:1) produced 7 routes; needs ~2 GB swap in a 1 GB container.",
+        "2026-09-07: Playwright tests/workbench.spec.ts 16/16 desktop + 16/16 iPhone 13 incl. axe WCAG 2.1 A/AA on /demo, /demo/projects, ?view=board, /new, /guide. axe caught 3 real contrast failures that were fixed (commit 26dc086).",
+        "Boundary: browser memory only. Proves interaction and accessibility, not persistence, RLS or auth."
+      ]
     },
     {
       "id": "CF-02",
       "title": "Tenant schema and adversarial RLS tests",
-      "status": "planned",
+      "status": "verified",
       "depends_on": [
         "CF-01"
       ],
-      "evidence": []
+      "evidence": [
+        "2026-09-07: PostgreSQL 17.11 + pgTAP 1.3 in sandbox (no Docker -> local/auth_shim.sql harness, differences in local/README.md). scripts/local-reset.sh applies 202609070001_platform.sql + 202609070002_clientflow.sql + seed.sql from an empty schema.",
+        "2026-09-07: pg_prove tests/clientflow_rls.test.sql 73/73 as real anon/authenticated roles (SET ROLE + request.jwt.claim.sub): RLS enabled+forced on every table; anon and no-sub tokens denied; cross-tenant SELECT/INSERT/UPDATE/DELETE denied; member of A and B cannot point an A project at a B client (composite FK); removed member, portal client and wrong-app owner see nothing; stale version -> 0 rows; version trigger; column-level grants; platform_create_workspace quota/ownership.",
+        "2026-09-07: Mutation checks: weakening cf_projects_insert_staff WITH CHECK to true fails 4 assertions; adding an enum value makes db:types:check exit 1.",
+        "2026-09-07: scripts/gen-types.mjs generated src/lib/database.types.ts (5 tables, 3 enums, 5 rpc functions); --check no drift; --self-test passed. tests/database-types.test.ts 5/5 (enum parity with Zod, grant-shaped Insert/Update). vitest 39/39, lint clean, typecheck clean.",
+        "Boundary: proves schema, grants, policies and triggers on plain Postgres with Supabase-equivalent auth.uid(). Does NOT prove GoTrue, PostgREST, storage or hosted behaviour. config.toml is written but unexecuted (no Docker)."
+      ]
     },
     {
       "id": "CF-03",
       "title": "Authentication and workspace onboarding",
-      "status": "planned",
+      "status": "in_progress",
       "depends_on": [
         "CF-02"
       ],

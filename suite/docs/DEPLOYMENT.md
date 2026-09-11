@@ -38,7 +38,7 @@ Pin the Supabase CLI version when introduced. Never run `db reset` against a lin
    - `suite/apps/clientflow`
    - `suite/apps/supportdesk`
    - `suite/apps/invoicehub`
-   Framework: Next.js; install `npm ci`; build `npm run build`; Node version matches app engines. **Ignore root legacy vercel.json** by selecting the correct root. No static export.
+   Framework: Next.js; install `npm ci`; build `npm run build`; Node version matches app engines. **Select the app root above**, not the repository root. No static export.
 7. Add env variables by environment (preview vs production) and redeploy. Public Supabase URL/key are intended client configuration; backend provider keys remain server-only. Never use `NEXT_PUBLIC_` for private keys.
 8. Create your own test accounts through normal signup/OAuth, not hardcoded public demo passwords. Seed synthetic data per workspace through a reviewed seed flow; keep it separate from real customer content.
 9. Run all smoke checks below. Record URLs/version/date and limitations in handoff/release notes.

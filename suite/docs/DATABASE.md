@@ -1,6 +1,6 @@
 # Database contract
 
-This is a design specification, not an applied migration. SQL files are created and tested in CF-02 onward.
+Design contract. **Applied state (2026-09-07, CF-02):** `202609070001_platform.sql` and `202609070002_clientflow.sql` exist, apply from empty and pass 73 pgTAP assertions as real request roles. Tables not listed as applied below (invitations, audit events, cf_tasks and later) remain planned.
 
 ## Shared tables (public schema)
 | Table | Fields and constraints |
@@ -32,12 +32,17 @@ A standalone project_id foreign key would allow a valid row to refer across tena
 - Invoice issue/payment and task version updates have their own bounded functions; no multi-request pseudo-transactions.
 
 ## Migrations
-1. `202609070001_platform.sql` (planned): common types/tables, functions, grants, RLS.
-2. `202609070002_clientflow.sql` (planned): cf tables + policies.
+1. `202609070001_platform.sql` (**applied locally, CF-02**): enums, `platform_profiles/workspaces/members`, helpers, `platform_create_workspace`, `platform_ensure_profile`, grants, RLS enabled+forced. `platform_invitations` and `platform_audit_events` are NOT in it yet (CF-05/CF-06 migrations).
+2. `202609070002_clientflow.sql` (**applied locally, CF-02**): `cf_clients`, `cf_projects` + policies. Later cf tables arrive with their gates.
 3. Subsequent timestamp files add invitations/storage as their gates are implemented.
 4. SupportDesk and InvoiceHub migrations added later, not placeholder SQL now.
 
-Each migration: fresh local DB → apply → adversarial SQL tests as real anon/authenticated roles → generate types → application integration tests. Do not test only as postgres/service_role (they bypass RLS). Tests use synthetic users A/B, multi-workspace user, client, removed member, anonymous visitor. Test WITH CHECK on inserts/updates, not SELECT alone.
+Each migration: fresh local DB → apply → adversarial SQL tests as real anon/authenticated roles → generate types → application integration tests.
+
+Commands (from `suite/apps/clientflow`, `DATABASE_URL` pointing at a throwaway local DB): `npm run db:reset`, `npm run db:test`, `npm run db:types`, `npm run db:types:check`. Without Docker the plain-Postgres harness in `suite/supabase/local/` is used; with Docker use `supabase start && supabase db reset && supabase test db`.
+
+## Generated types
+`suite/supabase/scripts/gen-types.mjs` writes `src/lib/database.types.ts` by introspecting `pg_catalog` (the CLI's `gen types` requires Docker). Two intentional differences from the CLI: extension-owned objects are omitted, and `Insert`/`Update` include only the columns the `authenticated` role may write (column-level grants), so server-managed columns such as `created_by` are absent and tables with no INSERT grant (`platform_*`) are typed `never` — writes go through rpc functions. `db:types:check` is a release-gate drift check (CF-08). Do not test only as postgres/service_role (they bypass RLS). Tests use synthetic users A/B, multi-workspace user, client, removed member, anonymous visitor. Test WITH CHECK on inserts/updates, not SELECT alone.
 
 ## Data lifecycle
 Archive projects with dependencies; don't cascade-delete financial history. Hard-delete user data only via a reviewed workspace deletion flow after export. Private storage objects require explicit cleanup; deleting SQL metadata is not deleting bytes. Shared Auth account deletion spans apps, so never offer casual per-app account deletion that destroys other products' data.
